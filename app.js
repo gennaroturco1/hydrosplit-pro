@@ -71,7 +71,6 @@ function setupItemizerListeners() {
     });
 }
 
-// Funzione isolata per ricalcolare i totali della bolletta e attivare/disattivare lo standby visivo
 function recalculateBillTotalsAndStandbyStates() {
     const rawInputs = document.querySelectorAll('.bill-raw-input');
     let imponibileSum = 0;
@@ -109,11 +108,7 @@ function recalculateBillTotalsAndStandbyStates() {
     document.getElementById('totalBill').value = totaleComplessivo > 0 ? totaleComplessivo.toFixed(2) : "";
 }
 
-/* ==========================================================================
-   📸 ENGINE SMART MOCK SCANNER AI BOLLETTA (COMPLETAMENTE GRATUITO)
-   ========================================================================== */
 window.triggerCameraScanner = function() {
-    // Sveglia l'input invisibile: su iPhone aprirà direttamente la FOTOCAMERA nativa
     document.getElementById('hiddenCameraInput').click();
 };
 
@@ -121,7 +116,6 @@ window.simulateAIOCRProcessing = function() {
     const fileInput = document.getElementById('hiddenCameraInput');
     if (!fileInput.files || fileInput.files.length === 0) return;
 
-    // Sblocca i pannelli visivi dello scanner
     const progressChassis = document.getElementById('ocrScannerProgressBar');
     const fillLine = document.getElementById('progressFillLine');
     const statusText = document.getElementById('scannerStatusText');
@@ -131,13 +125,12 @@ window.simulateAIOCRProcessing = function() {
     statusText.innerText = "Sincronizzazione fotocamera ed estrazione specchio visivo...";
 
     let percentage = 0;
-    const intervalTime = 25; // Sfrutta micro-intervalli continui per un effetto fluidissimo
+    const intervalTime = 20; 
     
     const timer = setInterval(() => {
         percentage += 1;
         fillLine.style.width = `${percentage}%`;
 
-        // Cambia i messaggi di stato in tempo reale per simulare l'IA dei Target Points
         if (percentage === 25) {
             statusText.innerText = "Rilevamento Target Points (Canoni e Oneri)... 🔍";
         } else if (percentage === 55) {
@@ -149,11 +142,9 @@ window.simulateAIOCRProcessing = function() {
         if (percentage >= 100) {
             clearInterval(timer);
             
-            // Ritardo minimo prima di nascondere la barra e mostrare la magia
             setTimeout(() => {
                 progressChassis.style.display = 'none';
                 
-                // INIEZIONE DIRETTA DEI DATI REALI DELLA BOLLETTA DI VIA OVIDIO
                 document.getElementById('bill_quotaFissa').value = "59.21";
                 document.getElementById('bill_canoniIdrici').value = "441.32";
                 document.getElementById('bill_canoneFognatura').value = "38.88";
@@ -164,13 +155,11 @@ window.simulateAIOCRProcessing = function() {
                 document.getElementById('bill_speseSpedizione').value = "0.55";
                 document.getElementById('bill_costoPagamento').value = "2.00";
 
-                // Ricalcola immediatamente i totali e accendi i campi da standby a cyan
                 recalculateBillTotalsAndStandbyStates();
 
-                // Feedback aptico visivo tramite modale di sistema
                 openMagicModal({
-                    title: "Scansione Completata Ufficialmente",
-                    description: "Il motore Vision IA locale ha agganciato con successo i Target Points della bolletta Publiservizi. Tutti i canoni, gli oneri e i costi esenti IVA sono stati inseriti in tabella.",
+                    title: "Scansione Completata",
+                    description: "Target Points della bolletta Publiservizi iniettati con successo. Controlla i totali ricalcolati.",
                     btnGradient: "linear-gradient(135deg, #22d3ee, #3b82f6)",
                     icon: "⚡",
                     bgIcon: "rgba(34, 211, 238, 0.1)",
@@ -178,7 +167,6 @@ window.simulateAIOCRProcessing = function() {
                     buttons: [{ text: "Perfetto, Continua", type: "primary", action: null }]
                 });
 
-                // Resetta il file input per permettere scansioni multiple successive
                 fileInput.value = "";
             }, 400);
         }
@@ -276,6 +264,7 @@ window.calculateSplit = function() {
         unit.totalOwed = unit.fixedOwed + unit.varOwed;
     });
 
+    // 🔑 SINCRONIZZAZIONE DI SICUREZZA: Salviamo l'array nella variabile globale prima di renderizzare
     currentActiveUnitData = units;
 
     const tableBody = document.getElementById('tableBody');
@@ -295,12 +284,12 @@ window.calculateSplit = function() {
 
     tableBody.innerHTML += `
         <tr class="summary-detail-row" style="background: rgba(15, 23, 42, 0.4); border-top: 2px solid rgba(255,255,255,0.05);">
-            <td colspan="3" style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; padding: 12px 16px;">Totale Spese a Divisione Uguale (Fisse):</td>
+            <td colspan="3" style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; padding: 12px 16px;">Totale Spese Fisse:</td>
             <td style="font-weight: 700; color: #94a3b8; padding: 12px 16px; white-space: nowrap;">€&nbsp;${totaleFissiFinito.toFixed(2)}</td>
-            <td colspan="2" style="color: #475569; font-size: 11px; padding: 12px 16px;">(Suddiviso tra ${totalUserNodesCount} utenti in quote da €&nbsp;${quotaFissaPerInquilino.toFixed(2)})</td>
+            <td colspan="2" style="color: #475569; font-size: 11px; padding: 12px 16px;">(Quote da €&nbsp;${quotaFissaPerInquilino.toFixed(2)})</td>
         </tr>
         <tr class="summary-detail-row" style="background: rgba(15, 23, 42, 0.4);">
-            <td colspan="4" style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; padding: 12px 16px;">Totale Spese a Consumo Proporzionale (m³ totali: ${totalSubConsumption.toFixed(2)}):</td>
+            <td colspan="4" style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; padding: 12px 16px;">Totale Spese Proporzionali (m³ totali: ${totalSubConsumption.toFixed(2)}):</td>
             <td style="font-weight: 700; color: #94a3b8; padding: 12px 16px; white-space: nowrap;">€&nbsp;${totaleVariabiliFinito.toFixed(2)}</td>
             <td style="text-align: right; padding-right: 24px; font-weight: 900; color: #ffffff; padding: 12px 16px; white-space: nowrap; font-size: 14px;">€&nbsp;${totalBill.toFixed(2)}</td>
         </tr>
@@ -388,6 +377,20 @@ window.calculateSplit = function() {
         </div>
     `;
 
+    const tabHeadersContainer = document.getElementById('magicTabHeaders');
+    tabHeadersContainer.innerHTML = '';
+    units.forEach(unit => {
+        const tabBtn = document.createElement('button');
+        tabBtn.innerText = unit.name;
+        tabBtn.id = `tabHeaderBtn_${unit.id}`;
+        tabBtn.style.cssText = `background: transparent; border: none; color: #64748b; font-weight: 700; font-size: 13px; padding: 8px 16px; cursor: pointer; border-bottom: 2px solid transparent; margin-bottom: 4px;`;
+        tabBtn.onclick = () => renderActiveTabContent(unit.id);
+        tabHeadersContainer.appendChild(tabBtn);
+    });
+    
+    // Attiviamo il primo tab condomini
+    renderActiveTabContent(units[0].id);
+
     const printContainer = document.getElementById('printOnlyAuditContainer');
     printContainer.innerHTML = `
         <h3 style="font-size: 10pt; font-weight: 800; color: #0f172a; text-transform: uppercase; margin-bottom: 10px; border-left: 4px solid #0ea5e9; padding-left: 6px; margin-top: 15px; page-break-after: avoid;">
@@ -408,26 +411,42 @@ window.calculateSplit = function() {
             `).join('')}
         </div>
     `;
+    
+    // Rende visibile la scheda dei risultati
     document.getElementById('resultsCard').style.display = 'block';
+    
+    // Forza lo scorrimento fluido fino alla tabella dei risultati (comodissimo su iPhone)
+    document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth' });
+    
     executeAutomaticRolloverStorage(units, totaleFissiImponibile);
 };
 
 function renderActiveTabContent(unitId) {
     const targetUnit = currentActiveUnitData.find(u => u.id === unitId);
     if (!targetUnit) return;
-    currentActiveUnitData.forEach(u => { const btn = document.getElementById(`tabHeaderBtn_${u.id}`); if (btn) { btn.style.color = "#64748b"; btn.style.borderBottomColor = "transparent"; } });
-    const activeBtn = document.getElementById(`tabHeaderBtn_${unitId}`); if (activeBtn) { activeBtn.style.color = "#22d3ee"; activeBtn.style.borderBottomColor = "#22d3ee"; }
+    
+    currentActiveUnitData.forEach(u => { 
+        const btn = document.getElementById(`tabHeaderBtn_${u.id}`); 
+        if (btn) { btn.style.color = "#64748b"; btn.style.borderBottomColor = "transparent"; } 
+    });
+    
+    const activeBtn = document.getElementById(`tabHeaderBtn_${unitId}`); 
+    if (activeBtn) { activeBtn.style.color = "#22d3ee"; activeBtn.style.borderBottomColor = "#22d3ee"; }
 
     document.getElementById('magicTabContent').innerHTML = `
         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; font-size: 13px; color: #cbd5e1; margin-top: 10px;">
-            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03); padding: 12px; border-radius: 12px;"><p style="color: #64748b; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">Intervallo Letture Sotto-Contatore</p><p style="font-weight: bold; color: #ffffff; font-size: 14px;">${targetUnit.prev.toFixed(2)} m³ ➔ ${targetUnit.curr.toFixed(2)} m³</p></div>
-            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03); padding: 12px; border-radius: 12px;"><p style="color: #64748b; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">Consumo Netto Rilevato</p><p style="font-weight: bold; color: #22d3ee; font-size: 14px;">${targetUnit.cons.toFixed(2)} m³ <span style="color: #64748b; font-size: 11px; font-weight: normal;">(${(targetUnit.share * 100).toFixed(1)}%)</span></p></div>
-            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03); padding: 12px; border-radius: 12px;"><p style="color: #64748b; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">Quota Spese Fisse Co-Divisa</p><p style="font-weight: bold; color: #ffffff; font-size: 14px; white-space: nowrap;">€&nbsp;${targetUnit.fixedOwed.toFixed(2)}</p></div>
-            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03); padding: 12px; border-radius: 12px;"><p style="color: #64748b; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">Quota Consumo Proporzionale</p><p style="font-weight: bold; color: #ffffff; font-size: 14px; white-space: nowrap;">€&nbsp;${targetUnit.varOwed.toFixed(2)}</p></div>
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03); padding: 12px; border-radius: 12px;"><p style="color: #64748b; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">Letture Sotto-Contatore</p><p style="font-weight: bold; color: #ffffff; font-size: 14px;">${targetUnit.prev.toFixed(2)} ➔ ${targetUnit.curr.toFixed(2)} m³</p></div>
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03); padding: 12px; border-radius: 12px;"><p style="color: #64748b; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">Consumo Netto</p><p style="font-weight: bold; color: #22d3ee; font-size: 14px;">${targetUnit.cons.toFixed(2)} m³ <span style="color: #64748b; font-size: 11px;">(${(targetUnit.share * 100).toFixed(1)}%)</span></p></div>
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03); padding: 12px; border-radius: 12px;"><p style="color: #64748b; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">Spese Fisse</p><p style="font-weight: bold; color: #ffffff; font-size: 14px;">€&nbsp;${targetUnit.fixedOwed.toFixed(2)}</p></div>
+            <div style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03); padding: 12px; border-radius: 12px;"><p style="color: #64748b; font-size: 10px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">Quota Consumo</p><p style="font-weight: bold; color: #ffffff; font-size: 14px;">€&nbsp;${targetUnit.varOwed.toFixed(2)}</p></div>
         </div>
-        <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12px; font-weight: 700; color: #94a3b8;">Importo Effettivo da Pagare:</span><span style="font-size: 18px; font-weight: 900; color: #22d3ee; white-space: nowrap;">€&nbsp;${targetUnit.totalOwed.toFixed(2)}</span></div>
+        <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.04); display: flex; justify-content: space-between; align-items: center;"><span style="font-size: 12px; font-weight: 700; color: #94a3b8;">Importo Dovuto:</span><span style="font-size: 18px; font-weight: 900; color: #22d3ee;">€&nbsp;${targetUnit.totalOwed.toFixed(2)}</span></div>
     `;
 }
+
+window.generatePrintPDF = function() {
+    window.print();
+};
 
 function executeAutomaticRolloverStorage(units, totalFixed) {
     const itemsData = {}; document.querySelectorAll('.bill-raw-input').forEach(i => { itemsData[i.id] = i.value; });
