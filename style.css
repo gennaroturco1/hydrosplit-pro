@@ -12,11 +12,17 @@
     --rose-accent: #f43f4e;
 }
 
+/* 🔑 TRATTAMENTO ANTI-BARRUCCIO BIANCO: Blocca il colore scuro nativo alla radice del browser mobile */
+html {
+    background-color: #020617 !important;
+}
+
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
 body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background: radial-gradient(circle at 50% 0%, #0f172a, var(--bg-main));
+    background: radial-gradient(circle at 50% 0%, #0f172a, var(--bg-main)) !important;
+    background-color: #020617 !important;
     background-attachment: fixed;
     color: #f1f5f9;
     min-height: 100vh;
@@ -69,7 +75,7 @@ body {
 
 .bill-section-header-responsive { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 12px; }
 
-/* 📸 PULSANTE SCANNER HI-TECH */
+/* 📸 PULSANTE SCANNER FOTOCAMERA */
 .btn-scan-trigger {
     background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(59, 130, 246, 0.15));
     border: 1px solid rgba(34, 211, 238, 0.4);
@@ -90,7 +96,7 @@ body {
     transform: translateY(-1px);
 }
 
-/* 🔄 ANIMAZIONE INTERATTIVA BARRA SCANNER AI */
+/* 🔄 PROGRESS BAR SCANNER */
 .scanner-progress-container {
     background: rgba(15, 23, 42, 0.8);
     border: 1px solid rgba(34, 211, 238, 0.2);
@@ -179,7 +185,7 @@ input::placeholder { color: #334155; }
 .results-header-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 16px; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 32px; }
 .btn-print-trigger { background: linear-gradient(135deg, #0ea5e9, #2563eb); border: none; color: var(--text-white); padding: 10px 20px; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); transition: all 0.15s ease; }
 
-/* 🔑 SCHERMO MOBILE REATTIVO (NESSUN TAGLIO ALLA TABELLA) */
+/* 🔑 INQUADRAMENTO VISIVO MOBILE: Sbloccata l'altezza per evitare tagli su smartphone */
 .table-frame { 
     background: rgba(10, 15, 30, 0.5); 
     border: 1px solid rgba(255, 255, 255, 0.04); 
@@ -201,7 +207,10 @@ input::placeholder { color: #334155; }
 #modalBackdrop { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; background-color: rgba(2, 6, 23, 0.85) !important; backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important; }
 #modalCard { position: relative !important; width: 100% !important; max-width: 420px !important; background: #090d1a !important; border: 1px solid rgba(255, 255, 255, 0.15) !important; border-radius: 20px !important; padding: 24px !important; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8) !important; margin: auto; }
 .modal-body-layout { display: flex !important; align-items: flex-start !important; gap: 14px !important; margin-bottom: 20px !important; }
+
+/* 🔧 RIGENERATO RIGA 204: Ripristinato l'align-items nativo corretto senza corruzioni di codice */
 #modalIconContainer { width: 44px !important; height: 44px !important; border-radius: 10px !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 20px !important; flex-shrink: 0 !important; }
+
 .modal-text-frame { flex: 1 !important; text-align: left !important; }
 #modalTitle { font-size: 16px !important; font-weight: 800 !important; color: #ffffff !important; margin: 0 0 4px 0 !important; }
 #modalDescription { font-size: 13px !important; color: #94a3b8 !important; line-height: 1.4 !important; margin: 0 !important; font-weight: 500 !important; }
@@ -252,24 +261,12 @@ input::placeholder { color: #334155; }
     height: 80vh;
 }
 
-.landing-badge {
-    padding: 6px 16px;
-    border-radius: 100px;
-    font-size: 11px;
-    font-weight: 800;
-    background: rgba(34, 211, 238, 0.06);
-    color: var(--cyan-accent);
-    letter-spacing: 0.15em;
-    border: 1px solid rgba(34, 211, 238, 0.15);
-    margin-bottom: 24px;
-    margin-top: auto;
-}
-
 .landing-title {
     font-size: 48px;
     font-weight: 900;
     letter-spacing: -0.04em;
     color: var(--text-white);
+    margin-top: auto;
     margin-bottom: 16px;
 }
 
@@ -318,14 +315,12 @@ input::placeholder { color: #334155; }
     letter-spacing: 0.02em;
 }
 
-/* Effetto sfocato per l'app dietro la landing */
 .app-blurred-ready {
     filter: blur(20px);
     opacity: 0;
     transition: filter 0.8s ease, opacity 0.8s ease;
 }
 
-/* Rimuove la sfocatura quando la landing va via */
 .app-active-reveal {
     filter: blur(0);
     opacity: 1;
@@ -337,7 +332,7 @@ input::placeholder { color: #334155; }
     .landing-content { height: 85vh; }
 }
 
-/* 📋 AREA DI STAMPA A4 PDF (PERFETTAMENTE PULITA) */
+/* 📋 AREA DI STAMPA A4 PDF (UNIVERSALE SENZA LOCALISMI) */
 @media print {
     @page { size: A4 portrait; margin: 15mm 12mm !important; }
     body { background: #ffffff !important; color: #1e293b !important; padding: 0 !important; margin: 0 !important; }

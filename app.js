@@ -74,17 +74,17 @@ function setupItemizerListeners() {
 function recalculateBillTotalsAndStandbyStates() {
     const rawInputs = document.querySelectorAll('.bill-raw-input');
     let imponibileSum = 0;
-    let fuoriIVASum = 0;
+    let fueraIVASum = 0;
 
     rawInputs.forEach(i => {
         const val = parseFloat(i.value) || 0;
         const type = i.getAttribute('data-type');
-        if (type === 'equal_no_tax') fuoriIVASum += val;   
+        if (type === 'equal_no_tax') fueraIVASum += val;   
         else if (type === 'equal' || type === 'proportional') imponibileSum += val; 
     });
 
     const calcolatoIVA = imponibileSum * 0.10;
-    const totaleComplessivo = imponibileSum + calcolatoIVA + fuoriIVASum;
+    const totaleComplessivo = imponibileSum + calcolatoIVA + fueraIVASum;
 
     const boxes = ['box_imponibileChassis', 'box_ivaChassis', 'mainTotalBoxChassis'];
     if (totaleComplessivo > 0) {
@@ -159,7 +159,7 @@ window.simulateAIOCRProcessing = function() {
 
                 openMagicModal({
                     title: "Scansione Completata",
-                    description: "Target Points della bolletta Publiservizi iniettati con successo. Controlla i totali ricalcolati.",
+                    description: "Target Points della bolletta idrica iniettati con successo. Controlla i totali ricalcolati.",
                     btnGradient: "linear-gradient(135deg, #22d3ee, #3b82f6)",
                     icon: "⚡",
                     bgIcon: "rgba(34, 211, 238, 0.1)",
@@ -317,18 +317,18 @@ window.calculateSplit = function() {
     let calcolatoImponibileTotale = totaleFissiImponibile + totaleVariabiliImponibile;
     let calcolataIvaTotale = fixedIVA + variableIVA;
 
+    // 🔑 SCALABILITÀ PDF: Struttura universale pulita da localismi
     printHeaderContainer.innerHTML = `
         <div style="border-bottom: 2px solid #0f172a; padding-bottom: 6px; margin-bottom: 15px;">
             <table style="width: 100%; border-collapse: collapse;">
                 <tr>
                     <td>
                         <div style="font-size: 18pt; font-weight: 800; color: #0f172a; text-transform: uppercase; letter-spacing: -0.02em;">Prospetto Riparto Spese</div>
-                        <div style="font-size: 9pt; color: #0ea5e9; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px;">Servizio Idrico Condominiale</div>
+                        <div style="font-size: 9pt; color: #0ea5e9; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-top: 2px;">HydroSplit Pro Condominium</div>
                     </td>
                     <td style="text-align: right; color: #475569; font-size: 8.5pt; line-height: 1.4; vertical-align: bottom;">
-                        <strong>Ubicazione:</strong> Via Ovidio 6, Aversa (CE)<br>
-                        <strong>Ente Gestore:</strong> Idrico Terra di Lavoro S.p.A.<br>
-                        <strong>Numero Utenze:</strong> ${totalUserNodesCount} Condomini
+                        <strong>Matrice Calcolo:</strong> Servizio Idrico Dinamico<br>
+                        <strong>Stato Campione:</strong> ${totalUserNodesCount} Unità Attive
                     </td>
                 </tr>
             </table>
@@ -349,7 +349,6 @@ window.calculateSplit = function() {
             </div>
             <div style="display: table-cell; width: 50%; padding-left: 4px;">
                 <div style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border: 1px solid #99f6e4; border-radius: 6px; padding: 6px;">
-                    <div style="font-size: 7.5pt; font-weight: 800; color: #0d9488; text-transform: uppercase; margin-bottom: 2px;">Totale Preavviso di Fatturazione</div>
                     <div style="font-size: 13pt; font-weight: 900; color: #115e59; white-space: nowrap;">€&nbsp;${totalBill.toFixed(2)}</div>
                 </div>
             </div>
@@ -389,7 +388,7 @@ window.calculateSplit = function() {
     
     renderActiveTabContent(units[0].id);
 
-    // ⚡ RESOCONTO TRASPARENZA PDF RIPRISTINATO
+    // ⚡ INTERFACCIA RIGENERAZIONE RESOCONTO AUDIT PDF
     const printContainer = document.getElementById('printOnlyAuditContainer');
     printContainer.innerHTML = `
         <h3 style="font-size: 10pt; font-weight: 800; color: #0f172a; text-transform: uppercase; margin-bottom: 10px; border-left: 4px solid #0ea5e9; padding-left: 6px; margin-top: 15px; page-break-after: avoid;">
