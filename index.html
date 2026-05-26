@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>HydroSplit Pro Condominium</title>
+    <link rel="icon" href="data:,">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="main-container">
+        
+        <div class="app-header">
+            <span class="badge">⚡ HydroSplit Pro Condominium v10.0</span>
+            <h1 class="brand-title">HydroSplit <span class="accent-text">Pro</span></h1>
+            <p class="brand-subtitle">Ripartizione dinamica sotto-contatori per condomini scalabili.</p>
+        </div>
+
+        <div class="form-body">
+            
+            <div class="section-group">
+                <h3 class="section-tag">1. COSA DEVO PAGARE? (Specchio Bolletta)</h3>
+                
+                <div class="bill-grid-card">
+                    <div class="bill-inputs-responsive-grid">
+                        
+                        <div class="bill-input-item-wrap"><span class="bill-item-label" id="lbl_quotaFissa">Quota Fissa</span><input type="number" class="bill-raw-input" id="bill_quotaFissa" data-type="equal" placeholder="59.21"></div>
+                        <div class="bill-input-item-wrap"><span class="bill-item-label" id="lbl_canoniIdrici">Canoni Idrici</span><input type="number" class="bill-raw-input" id="bill_canoniIdrici" data-type="proportional" placeholder="441.32"></div>
+                        <div class="bill-input-item-wrap"><span class="bill-item-label" id="lbl_canoneFognatura">Canone Fognatura</span><input type="number" class="bill-raw-input" id="bill_canoneFognatura" data-type="proportional" placeholder="38.88"></div>
+                        <div class="bill-input-item-wrap"><span class="bill-item-label" id="lbl_canoneDepurazione">Canone Depurazione</span><input type="number" class="bill-raw-input" id="bill_canoneDepurazione" data-type="proportional" placeholder="117.73"></div>
+                        <div class="bill-input-item-wrap"><span class="bill-item-label" id="lbl_perAcqua">Oneri Perequazione Acqua</span><input type="number" class="bill-raw-input" id="bill_perAcqua" data-type="equal" placeholder="12.48"></div>
+                        <div class="bill-input-item-wrap"><span class="bill-item-label" id="lbl_perFognatura">Oneri Perequazione Fognatura</span><input type="number" class="bill-raw-input" id="bill_perFognatura" data-type="equal" placeholder="12.48"></div>
+                        <div class="bill-input-item-wrap"><span class="bill-item-label" id="lbl_perDepurazione">Oneri Perequazione Depurazione</span><input type="number" class="bill-raw-input" id="bill_perDepurazione" data-type="equal" placeholder="12.48"></div>
+                        <div class="bill-input-item-wrap" style="background: rgba(244, 63, 94, 0.02); border: 1px solid rgba(244, 63, 94, 0.1);"><span class="bill-item-label" id="lbl_speseSpedizione">Spese di Spedizione / Posta</span><input type="number" class="bill-raw-input" id="bill_speseSpedizione" data-type="equal_no_tax" placeholder="0.55"></div>
+                        
+                        <div class="bill-input-item-wrap special-span-item">
+                            <span class="bill-item-label" id="lbl_costoPagamento" style="color: #22d3ee; font-weight: 700;">Costo Ricevuta / Commissione Pagamento</span>
+                            <input type="number" class="bill-raw-input" id="bill_costoPagamento" data-type="equal_no_tax" placeholder="2.00" style="color: #22d3ee; border-bottom: 1px solid #22d3ee; width: 80px;">
+                        </div>
+                        
+                    </div>
+                </div>
+
+                <div class="input-grid-2">
+                    <div class="premium-input-box calculated-standby-box" id="box_imponibileChassis">
+                        <label>Totale Imponibile <span class="sub-label">(Auto)</span></label>
+                        <div class="input-row"><span class="currency">€</span><input type="number" id="calcImponibile" readonly style="cursor: not-allowed;"></div>
+                    </div>
+                    <div class="premium-input-box calculated-standby-box" id="box_ivaChassis">
+                        <label>Totale IVA 10% <span class="sub-label">(Auto)</span></label>
+                        <div class="input-row"><span class="currency">€</span><input type="number" id="calcIVA" readonly style="cursor: not-allowed;"></div>
+                    </div>
+                </div>
+                
+                <div class="premium-input-box calculated-standby-box" id="mainTotalBoxChassis" style="margin-top: 15px;">
+                    <label style="font-weight: 800;" id="mainTotalLabel">Totale Preavviso Di Fatturazione <span class="sub-label">(Matrice Calcolata)</span></label>
+                    <div class="input-row"><span class="currency" id="mainTotalCurrency">€</span><input type="number" id="totalBill" readonly style="font-size: 24px; font-weight: 900; cursor: not-allowed;"></div>
+                </div>
+            </div>
+
+            <div class="section-group">
+                <div class="node-section-header-responsive">
+                    <h3 class="section-tag" style="margin-bottom: 0;">2. Letture Sotto-Contatori <span class="required-mark">*</span></h3>
+                    <div class="node-controls-buttons-wrap">
+                        <button type="button" onclick="addNewUserNode()" class="btn-node-control btn-add-mobile">＋ Aggiungi</button>
+                        <button type="button" onclick="removeLastUserNode()" class="btn-node-control btn-remove-mobile">－ Rimuovi</button>
+                    </div>
+                </div>
+                
+                <div id="dynamicNodeContainer" class="node-list">
+                    </div>
+            </div>
+
+            <div class="action-buttons-dashboard">
+                <button onclick="calculateSplit()" class="btn-compute">Elabora e Salva Prospetto ✨</button>
+                <button onclick="resetApplicationState()" class="btn-reset">Azzera 🗑️</button>
+            </div>
+
+            <div id="resultsCard" style="display: none;">
+                <div id="printOnlyInvoiceHeader"></div>
+
+                <div class="results-header-bar">
+                    <h3 class="section-tag">3. Prospetto di Ripartizione Ufficiale</h3>
+                    <button onclick="generatePrintPDF()" class="btn-print-trigger">🖨️ Stampa Ricevuta PDF</button>
+                </div>
+                
+                <div class="table-frame">
+                    <table class="premium-table">
+                        <thead>
+                            <tr>
+                                <th>Nodo Utenza</th>
+                                <th>Volume Netto</th>
+                                <th>Mix Consumo %</th>
+                                <th>Quota Fissa Ripartita</th>
+                                <th>Quota Variabile</th>
+                                <th style="text-align: right; padding-right: 24px;">Totale Dovuto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tableBody"></tbody>
+                    </table>
+                </div>
+
+                <div id="screenTabsSection" style="margin-top: 28px;">
+                    <h3 class="section-tag">4. Analisi Singola Utenza (Anteprima Schermo)</h3>
+                    <div id="magicTabHeaders" style="display: flex; gap: 8px; border-bottom: 2px solid rgba(255,255,255,0.04); padding-bottom: 8px; margin-bottom: 16px; flex-wrap: wrap;"></div>
+                    <div id="magicTabContent"></div>
+                </div>
+
+                <div id="printOnlyAuditContainer"></div>
+            </div>
+            
+        </div>
+    </div>
+
+    <div id="customModal">
+        <div id="modalBackdrop"></div>
+        <div id="modalCard">
+            <div class="modal-body-layout">
+                <div id="modalIconContainer"></div>
+                <div class="modal-text-frame"><h3 id="modalTitle">Operazione</h3><p id="modalDescription">Testo del messaggio di sistema.</p></div>
+            </div>
+            <div id="modalActions"></div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
