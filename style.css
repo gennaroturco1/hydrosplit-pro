@@ -67,6 +67,51 @@ body {
 .section-group { margin-bottom: 32px; }
 .section-tag { font-size: 11px; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 14px; }
 
+.bill-section-header-responsive { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 12px; }
+
+/* 📸 PULSANTE SCANNER HI-TECH */
+.btn-scan-trigger {
+    background: linear-gradient(135deg, rgba(34, 211, 238, 0.15), rgba(59, 130, 246, 0.15));
+    border: 1px solid rgba(34, 211, 238, 0.4);
+    color: var(--cyan-accent);
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.btn-scan-trigger:hover {
+    background: linear-gradient(135deg, rgba(34, 211, 238, 0.25), rgba(59, 130, 246, 0.25));
+    box-shadow: 0 0 15px rgba(34, 211, 238, 0.2);
+    transform: translateY(-1px);
+}
+
+/* 🔄 ANIMAZIONE INTERATTIVA BARRA SCANNER AI */
+.scanner-progress-container {
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid rgba(34, 211, 238, 0.2);
+    border-radius: 14px;
+    padding: 16px;
+    margin-bottom: 16px;
+}
+.scanner-text-wrapper { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+.scanner-pulse-dot {
+    width: 8px; height: 8px; background: var(--cyan-accent); border-radius: 50%;
+    animation: scannerPulse 1.2s infinite alternate;
+}
+#scannerStatusText { font-size: 12px; font-weight: 600; color: #cbd5e1; }
+.progress-bar-chassis { width: 100%; height: 6px; background: rgba(255,255,255,0.05); border-radius: 100px; overflow: hidden; }
+.progress-bar-fill { width: 0%; height: 100%; background: linear-gradient(to right, #22d3ee, #3b82f6); transition: width 0.1s linear; border-radius: 100px; }
+
+@keyframes scannerPulse {
+    0% { transform: scale(0.8); opacity: 0.5; box-shadow: 0 0 0 0 rgba(34, 211, 238, 0); }
+    100% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 8px 2px rgba(34, 211, 238, 0.4); }
+}
+
 .required-mark { color: #ef4444; font-weight: 800; margin-left: 2px; }
 
 .flash-error {
@@ -153,37 +198,21 @@ input::placeholder { color: #334155; }
 #modalDescription { font-size: 13px !important; color: #94a3b8 !important; line-height: 1.4 !important; margin: 0 !important; font-weight: 500 !important; }
 #modalActions { display: flex !important; align-items: center !important; justify-content: flex-end !important; gap: 10px !important; width: 100% !important; }
 
-/* ==========================================================================
-   ⚡ CORE RESPONSIVE ENGINE (OTTIMIZZAZIONE INTELLIGENTE PER SMARTPHONE)
-   ========================================================================== */
 @media (max-width: 768px) {
     body { padding: 10px 8px; align-items: flex-start; }
-    
     .main-container { border-radius: 16px; border: none; }
     .form-body { padding: 16px; }
-    
     .brand-title { font-size: 28px; }
     .brand-subtitle { font-size: 12px; }
-    
-    /* Riorganizza lo specchio bolletta in un'unica colonna pulita su iPhone */
+    .bill-section-header-responsive { flex-direction: column; align-items: stretch; gap: 8px; }
+    .btn-scan-trigger { justify-content: center; padding: 12px; font-size: 13px; }
     .bill-inputs-responsive-grid { grid-template-columns: 1fr; gap: 8px; }
     .special-span-item { grid-column: span 1; }
-    
     .input-grid-2 { grid-template-columns: 1fr; gap: 12px; }
-    
-    /* Ottimizzazione dei moduli dei Condomini in verticale */
-    .node-row-card {
-        grid-template-columns: 1fr; /* Una riga sotto l'altra */
-        gap: 10px;
-        padding: 14px;
-    }
+    .node-row-card { grid-template-columns: 1fr; gap: 10px; padding: 14px; }
     .meter-input { font-size: 16px !important; padding: 12px; }
-    
-    /* Pulsanti di controllo inferiori impilati */
     .action-buttons-dashboard { grid-template-columns: 1fr; gap: 10px; }
     .action-buttons-dashboard button { padding: 14px; font-size: 15px; }
-    
-    /* Centratura Modale per schermi piccoli */
     #modalCard { max-width: 90% !important; padding: 20px !important; }
 }
 
@@ -191,7 +220,7 @@ input::placeholder { color: #334155; }
     @page { size: A4 portrait; margin: 15mm 12mm !important; }
     body { background: #ffffff !important; color: #1e293b !important; padding: 0 !important; margin: 0 !important; }
     .main-container { border: none !important; box-shadow: none !important; background: transparent !important; max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
-    .app-header, .section-group, .action-buttons-dashboard, .results-header-bar, #screenTabsSection, #customModal, .summary-detail-row { display: none !important; }
+    .app-header, .section-group, .action-buttons-dashboard, .results-header-bar, #screenTabsSection, #customModal, .summary-detail-row, .btn-scan-trigger, .scanner-progress-container { display: none !important; }
     #resultsCard { display: block !important; }
     #printOnlyInvoiceHeader { display: block !important; margin-bottom: 15px; break-after: avoid; }
     .table-frame { background: transparent !important; border: 1px solid #e2e8f0 !important; border-radius: 8px !important; max-height: none !important; overflow: visible !important; }
