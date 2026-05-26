@@ -141,7 +141,7 @@ window.calculateSplit = function() {
     if (hasErrors) {
         openMagicModal({
             title: "Campi Obbligatori Mancanti",
-            description: "Compile tutte le voci prima di elaborare la ripartizione.",
+            description: "Compila tutte le voci prima di elaborare la ripartizione.",
             btnGradient: "linear-gradient(135deg, #0ea5e9, #2563eb)",
             icon: "📋",
             bgIcon: "rgba(14, 165, 233, 0.1)",
@@ -195,6 +195,9 @@ window.calculateSplit = function() {
         unit.totalOwed = unit.fixedOwed + unit.varOwed;
     });
 
+    // Aggiorna la memoria globale dei dati utente per i tab interattivi
+    currentActiveUnitData = units;
+
     const tableBody = document.getElementById('tableBody');
     tableBody.innerHTML = '';
     units.forEach(unit => {
@@ -243,6 +246,10 @@ window.calculateSplit = function() {
         else if (val > 0) propItemsHTML += rowTemplate;
     });
 
+    // 🔧 FIX EFFETTUATO QUI: Utilizzate le variabili corrette per l'HTML di stampa
+    let calcolatoImponibileTotale = totaleFissiImponibile + totaleVariabiliImponibile;
+    let calcolataIvaTotale = fixedIVA + variableIVA;
+
     printHeaderContainer.innerHTML = `
         <div style="border-bottom: 2px solid #0f172a; padding-bottom: 6px; margin-bottom: 15px;">
             <table style="width: 100%; border-collapse: collapse;">
@@ -264,13 +271,13 @@ window.calculateSplit = function() {
             <div style="display: table-cell; width: 25%; padding-right: 4px;">
                 <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px;">
                     <div style="font-size: 7.5pt; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 2px;">Totale Imponibile</div>
-                    <div style="font-size: 12pt; font-weight: 800; color: #0f172a; white-space: nowrap;">€&nbsp;${imponibile.toFixed(2)}</div>
+                    <div style="font-size: 12pt; font-weight: 800; color: #0f172a; white-space: nowrap;">€&nbsp;${calcolatoImponibileTotale.toFixed(2)}</div>
                 </div>
             </div>
             <div style="display: table-cell; width: 25%; padding: 0 4px;">
                 <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px;">
                     <div style="font-size: 7.5pt; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 2px;">Totale IVA (10%)</div>
-                    <div style="font-size: 12pt; font-weight: 800; color: #475569; white-space: nowrap;">€&nbsp;${totalTax.toFixed(2)}</div>
+                    <div style="font-size: 12pt; font-weight: 800; color: #475569; white-space: nowrap;">€&nbsp;${calcolataIvaTotale.toFixed(2)}</div>
                 </div>
             </div>
             <div style="display: table-cell; width: 50%; padding-left: 4px;">
