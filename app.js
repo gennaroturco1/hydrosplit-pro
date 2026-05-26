@@ -264,7 +264,6 @@ window.calculateSplit = function() {
         unit.totalOwed = unit.fixedOwed + unit.varOwed;
     });
 
-    // 🔑 SINCRONIZZAZIONE DI SICUREZZA: Salviamo l'array nella variabile globale prima di renderizzare
     currentActiveUnitData = units;
 
     const tableBody = document.getElementById('tableBody');
@@ -286,7 +285,7 @@ window.calculateSplit = function() {
         <tr class="summary-detail-row" style="background: rgba(15, 23, 42, 0.4); border-top: 2px solid rgba(255,255,255,0.05);">
             <td colspan="3" style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; padding: 12px 16px;">Totale Spese Fisse:</td>
             <td style="font-weight: 700; color: #94a3b8; padding: 12px 16px; white-space: nowrap;">€&nbsp;${totaleFissiFinito.toFixed(2)}</td>
-            <td colspan="2" style="color: #475569; font-size: 11px; padding: 12px 16px;">(Quote da €&nbsp;${quotaFissaPerInquilino.toFixed(2)})</td>
+            <td colspan="2" style="color: #475569; font-size: 11px; padding: 12px 16px;">(Quotes da €&nbsp;${quotaFissaPerInquilino.toFixed(2)})</td>
         </tr>
         <tr class="summary-detail-row" style="background: rgba(15, 23, 42, 0.4);">
             <td colspan="4" style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; padding: 12px 16px;">Totale Spese Proporzionali (m³ totali: ${totalSubConsumption.toFixed(2)}):</td>
@@ -388,13 +387,13 @@ window.calculateSplit = function() {
         tabHeadersContainer.appendChild(tabBtn);
     });
     
-    // Attiviamo il primo tab condomini
     renderActiveTabContent(units[0].id);
 
+    // ⚡ SEZIONE RIPRISTINATA: Rigenerazione dei moduli di audit trasparenti per la stampa PDF A4
     const printContainer = document.getElementById('printOnlyAuditContainer');
     printContainer.innerHTML = `
         <h3 style="font-size: 10pt; font-weight: 800; color: #0f172a; text-transform: uppercase; margin-bottom: 10px; border-left: 4px solid #0ea5e9; padding-left: 6px; margin-top: 15px; page-break-after: avoid;">
-            3. Trasparenza Audit Contatori Individuali
+            2. Trasparenza Audit Contatori Individuali
         </h3>
         <div style="display: flex; flex-wrap: wrap; gap: 12px; margin-top: 5px;">
             ${units.map(u => `
@@ -412,10 +411,7 @@ window.calculateSplit = function() {
         </div>
     `;
     
-    // Rende visibile la scheda dei risultati
     document.getElementById('resultsCard').style.display = 'block';
-    
-    // Forza lo scorrimento fluido fino alla tabella dei risultati (comodissimo su iPhone)
     document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth' });
     
     executeAutomaticRolloverStorage(units, totaleFissiImponibile);
