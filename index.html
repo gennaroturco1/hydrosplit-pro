@@ -9,7 +9,23 @@
 </head>
 <body>
 
-    <div class="main-container">
+    <div id="appLandingScreen" class="landing-overlay">
+        <div class="landing-content">
+            <div class="landing-badge">💧 ECO-DRIVEN SOFTWARE</div>
+            <h1 class="landing-title">HydroSplit <span class="accent-text">Pro</span></h1>
+            <p class="landing-subtitle">La piattaforma intelligente per la ripartizione dinamica, l'audit e il bilanciamento dei sotto-contatori idrici condominiali.</p>
+            
+            <button type="button" class="btn-landing-start" onclick="dismissLandingScreen()">
+                Inizia Elaborazione ✨
+            </button>
+            
+            <div class="landing-footer">
+                Ideata e sviluppata da <span class="developer-signature">Gennaro Turco</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container app-blurred-ready" id="mainAppContainer">
         
         <div class="app-header">
             <span class="badge">⚡ HydroSplit Pro Condominium v11.0</span>
@@ -49,7 +65,7 @@
                         <div class="bill-input-item-wrap"><span class="bill-item-label" id="lbl_perAcqua">Oneri Perequazione Acqua</span><input type="number" class="bill-raw-input" id="bill_perAcqua" data-type="equal" placeholder="12.48"></div>
                         <div class="bill-input-item-wrap"><span class="bill-item-label" id="lbl_perFognatura">Oneri Perequazione Fognatura</span><input type="number" class="bill-raw-input" id="bill_perFognatura" data-type="equal" placeholder="12.48"></div>
                         <div class="bill-input-item-wrap"><span class="bill-item-label" id="lbl_perDepurazione">Oneri Perequazione Depurazione</span><input type="number" class="bill-raw-input" id="bill_perDepurazione" data-type="equal" placeholder="12.48"></div>
-                        <div class="bill-input-item-wrap" style="background: rgba(244, 63, 94, 0.02); border: 1px solid rgba(244, 63, 94, 0.1);"><span class="bill-input-item-wrap"><span class="bill-item-label" id="lbl_speseSpedizione">Spese di Spedizione / Posta</span><input type="number" class="bill-raw-input" id="bill_speseSpedizione" data-type="equal_no_tax" placeholder="0.55"></div>
+                        <div class="bill-input-item-wrap" style="background: rgba(244, 63, 94, 0.02); border: 1px solid rgba(244, 63, 94, 0.1);"><span class="bill-item-label" id="lbl_speseSpedizione">Spese di Spedizione / Posta</span><input type="number" class="bill-raw-input" id="bill_speseSpedizione" data-type="equal_no_tax" placeholder="0.55"></div>
                         
                         <div class="bill-input-item-wrap special-span-item">
                             <span class="bill-item-label" id="lbl_costoPagamento" style="color: #22d3ee; font-weight: 700;">Costo Ricevuta / Commissione Pagamento</span>

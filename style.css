@@ -179,7 +179,7 @@ input::placeholder { color: #334155; }
 .results-header-bar { display: flex; justify-content: space-between; align-items: center; margin-top: 40px; margin-bottom: 16px; border-top: 1px solid rgba(255, 255, 255, 0.06); padding-top: 32px; }
 .btn-print-trigger { background: linear-gradient(135deg, #0ea5e9, #2563eb); border: none; color: var(--text-white); padding: 10px 20px; border-radius: 12px; font-size: 13px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); transition: all 0.15s ease; }
 
-/* 🔑 FIRST OCCURRENCE: SCHERMO SCREEN (FIX APPLICATO QUI) */
+/* 🔑 SCHERMO MOBILE REATTIVO (NESSUN TAGLIO ALLA TABELLA) */
 .table-frame { 
     background: rgba(10, 15, 30, 0.5); 
     border: 1px solid rgba(255, 255, 255, 0.04); 
@@ -201,7 +201,8 @@ input::placeholder { color: #334155; }
 #modalBackdrop { position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important; background-color: rgba(2, 6, 23, 0.85) !important; backdrop-filter: blur(12px) !important; -webkit-backdrop-filter: blur(12px) !important; }
 #modalCard { position: relative !important; width: 100% !important; max-width: 420px !important; background: #090d1a !important; border: 1px solid rgba(255, 255, 255, 0.15) !important; border-radius: 20px !important; padding: 24px !important; box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8) !important; margin: auto; }
 .modal-body-layout { display: flex !important; align-items: flex-start !important; gap: 14px !important; margin-bottom: 20px !important; }
-#modalIconContainer { width: 44px !important; height: 44px !important; border-radius: 10px !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 20px !important; flex-shrink: 0 !important; }.modal-text-frame { flex: 1 !important; text-align: left !important; }
+#modalIconContainer { width: 44px !important; height: 44px !important; border-radius: 10px !important; display: flex !important; align-items: center !important; justify-content: center !important; font-size: 20px !important; flex-shrink: 0 !important; }
+.modal-text-frame { flex: 1 !important; text-align: left !important; }
 #modalTitle { font-size: 16px !important; font-weight: 800 !important; color: #ffffff !important; margin: 0 0 4px 0 !important; }
 #modalDescription { font-size: 13px !important; color: #94a3b8 !important; line-height: 1.4 !important; margin: 0 !important; font-weight: 500 !important; }
 #modalActions { display: flex !important; align-items: center !important; justify-content: flex-end !important; gap: 10px !important; width: 100% !important; }
@@ -224,12 +225,124 @@ input::placeholder { color: #334155; }
     #modalCard { max-width: 90% !important; padding: 20px !important; }
 }
 
-/* 📋 SECOND OCCURRENCE: AREA DI STAMPA A4 (LASCIATA INTATTA PER IL PDF) */
+/* ==========================================================================
+   🌊 PREMIUM LANDING SCREEN STYLES (FIRMA GENNARO TURCO)
+   ========================================================================== */
+.landing-overlay {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle at 50% 30%, #0f172a, #020617);
+    z-index: 9999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.6s;
+}
+
+.landing-content {
+    max-width: 550px;
+    width: 100%;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 80vh;
+}
+
+.landing-badge {
+    padding: 6px 16px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 800;
+    background: rgba(34, 211, 238, 0.06);
+    color: var(--cyan-accent);
+    letter-spacing: 0.15em;
+    border: 1px solid rgba(34, 211, 238, 0.15);
+    margin-bottom: 24px;
+    margin-top: auto;
+}
+
+.landing-title {
+    font-size: 48px;
+    font-weight: 900;
+    letter-spacing: -0.04em;
+    color: var(--text-white);
+    margin-bottom: 16px;
+}
+
+.landing-subtitle {
+    font-size: 15px;
+    color: var(--text-slate);
+    line-height: 1.6;
+    font-weight: 500;
+    margin-bottom: 40px;
+}
+
+.btn-landing-start {
+    background: linear-gradient(135deg, #22d3ee, #3b82f6);
+    color: var(--text-white);
+    border: none;
+    padding: 16px 40px;
+    border-radius: 16px;
+    font-size: 16px;
+    font-weight: 800;
+    cursor: pointer;
+    box-shadow: 0 20px 40px -10px rgba(34, 211, 238, 0.3);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-landing-start:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 25px 50px -10px rgba(34, 211, 238, 0.45);
+    filter: brightness(1.1);
+}
+
+.landing-footer {
+    margin-top: auto;
+    font-size: 12px;
+    font-weight: 600;
+    color: #475569;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border-top: 1px solid rgba(255, 255, 255, 0.03);
+    padding-top: 20px;
+    width: 100%;
+}
+
+.developer-signature {
+    color: #cbd5e1;
+    font-weight: 800;
+    letter-spacing: 0.02em;
+}
+
+/* Effetto sfocato per l'app dietro la landing */
+.app-blurred-ready {
+    filter: blur(20px);
+    opacity: 0;
+    transition: filter 0.8s ease, opacity 0.8s ease;
+}
+
+/* Rimuove la sfocatura quando la landing va via */
+.app-active-reveal {
+    filter: blur(0);
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .landing-title { font-size: 38px; }
+    .landing-subtitle { font-size: 14px; }
+    .landing-content { height: 85vh; }
+}
+
+/* 📋 AREA DI STAMPA A4 PDF (PERFETTAMENTE PULITA) */
 @media print {
     @page { size: A4 portrait; margin: 15mm 12mm !important; }
     body { background: #ffffff !important; color: #1e293b !important; padding: 0 !important; margin: 0 !important; }
     .main-container { border: none !important; box-shadow: none !important; background: transparent !important; max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
-    .app-header, .section-group, .action-buttons-dashboard, .results-header-bar, #screenTabsSection, #customModal, .summary-detail-row, .btn-scan-trigger, .scanner-progress-container { display: none !important; }
+    .app-header, .section-group, .action-buttons-dashboard, .results-header-bar, #screenTabsSection, #customModal, .summary-detail-row, .btn-scan-trigger, .scanner-progress-container, .landing-overlay { display: none !important; }
     #resultsCard { display: block !important; }
     #printOnlyInvoiceHeader { display: block !important; margin-bottom: 15px; break-after: avoid; }
     .table-frame { background: transparent !important; border: 1px solid #e2e8f0 !important; border-radius: 8px !important; max-height: none !important; overflow: visible !important; }

@@ -389,7 +389,7 @@ window.calculateSplit = function() {
     
     renderActiveTabContent(units[0].id);
 
-    // ⚡ SEZIONE RIPRISTINATA: Rigenerazione dei moduli di audit trasparenti per la stampa PDF A4
+    // ⚡ RESOCONTO TRASPARENZA PDF RIPRISTINATO
     const printContainer = document.getElementById('printOnlyAuditContainer');
     printContainer.innerHTML = `
         <h3 style="font-size: 10pt; font-weight: 800; color: #0f172a; text-transform: uppercase; margin-bottom: 10px; border-left: 4px solid #0ea5e9; padding-left: 6px; margin-top: 15px; page-break-after: avoid;">
@@ -525,3 +525,17 @@ function executeResetLogic() {
     document.getElementById('tableBody').innerHTML = ''; 
     document.getElementById('resultsCard').style.display = 'none'; 
 }
+
+/* ==========================================================================
+   🎬 LANDING SCREEN CONTROLLER
+   ========================================================================== */
+window.dismissLandingScreen = function() {
+    const landing = document.getElementById('appLandingScreen');
+    const mainApp = document.getElementById('mainAppContainer');
+    
+    if (landing && mainApp) {
+        landing.style.opacity = '0';
+        landing.style.visibility = 'hidden';
+        mainApp.classList.add('app-active-reveal');
+    }
+};
