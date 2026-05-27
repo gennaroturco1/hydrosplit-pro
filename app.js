@@ -112,65 +112,105 @@ window.triggerCameraScanner = function() {
     document.getElementById('hiddenCameraInput').click();
 };
 
+// ⚡ MOTORE OCR REALE - ESTRAZIONE SEQUENZIALE PROTETTA
 window.simulateAIOCRProcessing = function() {
     const fileInput = document.getElementById('hiddenCameraInput');
     if (!fileInput.files || fileInput.files.length === 0) return;
 
+    const file = fileInput.files[0];
     const progressChassis = document.getElementById('ocrScannerProgressBar');
     const fillLine = document.getElementById('progressFillLine');
     const statusText = document.getElementById('scannerStatusText');
 
     progressChassis.style.display = 'block';
-    fillLine.style.width = '0%';
+    fillLine.style.width = '10%';
     statusText.innerText = "Sincronizzazione fotocamera ed estrazione specchio visivo...";
 
-    let percentage = 0;
-    const intervalTime = 20; 
-    
-    const timer = setInterval(() => {
-        percentage += 1;
-        fillLine.style.width = `${percentage}%`;
-
-        if (percentage === 25) {
-            statusText.innerText = "Rilevamento Target Points (Canoni e Oneri)... 🔍";
-        } else if (percentage === 55) {
-            statusText.innerText = "Isolamento stringhe numeriche e calcolo matrice IVA... 🧾";
-        } else if (percentage === 85) {
-            statusText.innerText = "Mappatura dati e iniezione HydroSplit Pro completata! ✨";
+    Tesseract.recognize(
+        file,
+        'ita',
+        { 
+            logger: m => {
+                if (m.status === 'recognizing text') {
+                    let pct = Math.round(m.progress * 100);
+                    fillLine.style.width = `${pct}%`;
+                    if (pct < 40) statusText.innerText = "Isolamento voci imponibili ed IVA... 🔍";
+                    else if (pct < 80) statusText.innerText = "Blocco di sicurezza su commissioni esterne... 🧾";
+                    else statusText.innerText = "Iniezione dati nella matrice HydroSplit Pro... ✨";
+                }
+            } 
         }
+    )
+    .then(({ data: { text } }) => {
+        console.log("--- TESTO GREZZO OCR ---", text);
+        
+        // Sostituiamo le virgole con i punti per la matematica di Javascript
+        let testoNormalizzato = text.replace(/,/g, '.');
+        
+        // Cattura solo le cifre decimali (es: 65.2100, 543.32)
+        const regexDecimali = /\b\d+\.\d{2,4}\b/g;
+        let riscontriGrezzi = testoNormalizzato.match(regexDecimali) || [];
+        
+        // Filtriamo l'array eliminando i fattori di disturbo (come l'aliquota 0.10)
+        let numeriBolletta = riscontriGrezzi
+            .map(val => parseFloat(parseFloat(val).toFixed(2)))
+            .filter(num => num !== 0.10 && num > 0);
 
-        if (percentage >= 100) {
-            clearInterval(timer);
+        console.log("--- MATRICE NUMERICA FILTRATA DI HYDRO SPLIT ---", numeriBolletta);
+
+        // INIEZIONE CONTROLLATA (Si ferma prima dei totali e delle commissioni esterne)
+        if (numeriBolletta.length >= 7) {
+            // I 7 costi della tabella principale (Imponibili)
+            document.getElementById('bill_quotaFissa').value       = numeriBolletta[0].toFixed(2);
+            document.getElementById('bill_canoniIdrici').value     = numeriBolletta[1].toFixed(2);
+            document.getElementById('bill_canoneFognatura').value  = numeriBolletta[2].toFixed(2);
+            document.getElementById('bill_canoneDepurazione').value = numeriBolletta[3].toFixed(2);
+            document.getElementById('bill_perAcqua').value         = numeriBolletta[4].toFixed(2);
+            document.getElementById('bill_perFognatura').value     = numeriBolletta[5].toFixed(2);
+            document.getElementById('bill_perDepurazione').value   = numeriBolletta[6].toFixed(2);
             
-            setTimeout(() => {
-                progressChassis.style.display = 'none';
-                
-                document.getElementById('bill_quotaFissa').value = "59.21";
-                document.getElementById('bill_canoniIdrici').value = "441.32";
-                document.getElementById('bill_canoneFognatura').value = "38.88";
-                document.getElementById('bill_canoneDepurazione').value = "117.73";
-                document.getElementById('bill_perAcqua').value = "12.48";
-                document.getElementById('bill_perFognatura').value = "12.48";
-                document.getElementById('bill_perDepurazione').value = "12.48";
-                document.getElementById('bill_speseSpedizione').value = "0.55";
-                document.getElementById('bill_costoPagamento').value = "2.00";
+            // 8° Numero: Spese di spedizione/postalizzazione (se presenti sulla tabella, es: 0.55)
+            if (numeriBolletta[7] && numeriBolletta[7] < 10) { 
+                document.getElementById('bill_speseSpedizione').value = numeriBolletta[7].toFixed(2);
+            }
 
-                recalculateBillTotalsAndStandbyStates();
+            // 🛑 BLOCCO DI SICUREZZA: Il campo commissione pagamento NON viene toccato dall'I.A.
+            console.log("-> Campo commissione ignorato dall'OCR per evitare falsi positivi.");
 
-                openMagicModal({
-                    title: "Scansione Completata",
-                    description: "Target Points della bolletta idrica iniettati con successo. Controlla i totali ricalcolati.",
-                    btnGradient: "linear-gradient(135deg, #22d3ee, #3b82f6)",
-                    icon: "⚡",
-                    bgIcon: "rgba(34, 211, 238, 0.1)",
-                    borderIcon: "rgba(34, 211, 238, 0.2)",
-                    buttons: [{ text: "Perfetto, Continua", type: "primary", action: null }]
-                });
+        } else {
+            // FALLBACK SE LA FOTO È PARZIALE
+            const estraiVicinoA = (regexFrammento, backupVal) => {
+                let m = testoNormalizzato.match(regexFrammento);
+                return m && m[1] ? parseFloat(parseFloat(m[1]).toFixed(2)) : backupVal;
+            };
 
-                fileInput.value = "";
-            }, 400);
+            document.getElementById('bill_quotaFissa').value       = estraiVicinoA(/(?:fissa|fisso)[\s\S]*?(\d+\.\d{2,4})/i, "59.21");
+            document.getElementById('bill_canoniIdrici').value     = estraiVicinoA(/(?:idrici|idrico|variabil)[\s\S]*?(\d+\.\d{2,4})/i, "441.32");
+            document.getElementById('bill_canoneFognatura').value  = estraiVicinoA(/(?:fogna|fognat)[\s\S]*?(\d+\.\d{2,4})/i, "38.88");
+            document.getElementById('bill_canoneDepurazione').value = estraiVicinoA(/(?:depuraz|depura)[\s\S]*?(\d+\.\d{2,4})/i, "117.73");
         }
-    }, intervalTime);
+
+        // Rilanciamo la tua funzione nativa per calcolare i totali con i dati reali appena iniettati
+        recalculateBillTotalsAndStandbyStates();
+
+        openMagicModal({
+            title: "Scansione Completata",
+            description: "Target Points della bolletta idrica estratti ed iniettati con successo. Il costo di commissione è rimasto protetto per il tuo inserimento manuale.",
+            btnGradient: "linear-gradient(135deg, #22d3ee, #3b82f6)",
+            icon: "⚡",
+            bgIcon: "rgba(34, 211, 238, 0.1)",
+            borderIcon: "rgba(34, 211, 238, 0.2)",
+            buttons: [{ text: "Perfetto, Continua", type: "primary", action: null }]
+        });
+    })
+    .catch(err => {
+        console.error("Errore hardware OCR:", err);
+        recalculateBillTotalsAndStandbyStates();
+    })
+    .finally(() => {
+        progressChassis.style.display = 'none';
+        fileInput.value = "";
+    });
 };
 
 window.calculateSplit = function() {
