@@ -137,12 +137,21 @@ window.simulateAIOCRProcessing = function() {
         fillLine.style.width = '45%';
         statusText.innerText = "Analisi semantica e bilanciamento della matrice... 🔍";
 
-        // Construct a structured strict-JSON instruction system
-        const promptInstruction = `Analyze this Italian utility water bill image. Extract the billing values. 
-        Return strictly a raw JSON object matching these exact keys with float values. 
-        Do not wrap in markdown code blocks or add text.
-        Keys: "quota_fissa", "canoni_idrici", "fognatura", "depurazione", "perequazione_acqua", "perequazione_fognatura", "perequazione_depurazione", "spese_spedizione"`;
-
+        // Configurazione delle regole di estrazione semantica per evitare omissioni
+        const promptInstruction = `Analizza questa bolletta idrica italiana. Estrai i valori finanziari associati a queste voci specifiche.
+        Restituisci ESCLUSIVAMENTE un oggetto JSON pulito, senza blocchi di codice markdown o testo aggiuntivo.
+        Associa i dati secondo questa mappatura rigida:
+        - "quota_fissa": Cerca "Quota Fissa"
+        - "canoni_idrici": Cerca "Canoni Idrici"
+        - "fognatura": Cerca "Canone Fognatura"
+        - "depurazione": Cerca "Canone Depurazione"
+        - "perequazione_acqua": Cerca "Oneri Perequazione Acqua"
+        - "perequazione_fognatura": Cerca "Oneri Perequazione Fognatura"
+        - "perequazione_depurazione": Cerca "Oneri Perequazione Depurazione"
+        - "spese_spedizione": Cerca "Spese di Postalizzazione" o "Spese Di Spedizione"
+        
+        Usa numeri float (es. 12.48). Se una voce non viene trovata, imposta il valore a 0.`;
+        
         // Directly utilizing production open-source inference pipelines
         fetch("https://api.groq.com/openai/v1/chat/completions", {
             method: "POST",
