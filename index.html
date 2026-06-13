@@ -49,7 +49,7 @@
                     <button type="button" class="btn-scan-trigger" onclick="triggerCameraScanner()">
                         📸 Scansiona Bolletta con Foto
                     </button>
-                    <input type="file" id="hiddenCameraInput" accept="image/*" capture="environment" style="display: none;" onchange="simulateAIOCRProcessing()">
+                    <input type="file" id="hiddenCameraInput" accept="image/*" capture="environment" style="display: none;" onchange="processBillVisionOCR()">
                 </div>
 
                 <div id="ocrScannerProgressBar" class="scanner-progress-container" style="display: none;">
@@ -104,12 +104,11 @@
                     <h3 class="section-tag" style="margin-bottom: 0;">2. Letture Sotto-Contatori <span class="required-mark">*</span></h3>
                     <div class="node-controls-buttons-wrap">
                         <button type="button" onclick="addNewUserNode()" class="btn-node-control btn-add-mobile">＋ Aggiungi</button>
-                        <button type="button" onclick="removeLastUserNode()" class="btn-node-control btn-remove-mobile">－ Rivoovi</button>
+                        <button type="button" onclick="removeLastUserNode()" class="btn-node-control btn-remove-mobile">－ Rimuovi</button>
                     </div>
                 </div>
                 
-                <div id="dynamicNodeContainer" class="node-list">
-                    </div>
+                <div id="dynamicNodeContainer" class="node-list"></div>
             </div>
 
             <div class="action-buttons-dashboard">
@@ -164,8 +163,6 @@
         </div>
     </div>
 
-    <script src="app.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>

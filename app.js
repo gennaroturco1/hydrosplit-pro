@@ -115,7 +115,7 @@ window.triggerCameraScanner = function() {
 /* ==========================================================================
    ⚡ ENTERPRISE VISION-LLM CALCULATION ENGINE - PROD DEPLOYMENT
    ========================================================================== */
-window.simulateAIOCRProcessing = function() {
+window.processBillVisionOCR = function() {
     const fileInput = document.getElementById('hiddenCameraInput');
     if (!fileInput.files || fileInput.files.length === 0) return;
 
@@ -136,7 +136,6 @@ window.simulateAIOCRProcessing = function() {
         fillLine.style.width = '45%';
         statusText.innerText = "Analisi semantica e bilanciamento della matrice... 🔍";
 
-        // Tightened prompt targeting repeating item descriptions explicitly
         const promptInstruction = `You are a data extraction engine. Analyze the provided Italian water bill image.
         Locate the section titled "COSA DEVO PAGARE?". Extract the numerical values for the table rows.
         
@@ -154,24 +153,13 @@ window.simulateAIOCRProcessing = function() {
         
         - "spese_spedizione": The value next to 'Spese di Spedizione' or 'Spese di Postalizzazione' (e.g., 0.55)`;
 
-        // Fetching through the Llama 4 Scout platform optimization tier
-        fetch("https://api.groq.com/openai/v1/chat/completions", {
+        // Connessione protetta alla Serverless Function locale su Vercel
+        fetch("/api/ocr", {
             method: "POST",
-            headers: {
-                "Authorization": "Bearer gsk_yG6X3B7F9zR2wK1vL8mN9pQ4sT5uV2wX1yZ0aBcDeFgHiJkLmNoP",
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                messages: [{
-                    role: "user",
-                    content: [
-                        { type: "text", text: promptInstruction },
-                        { type: "image_url", image_url: { url: `data:image/jpeg;base64,${base64Image}` } }
-                    ]
-                }],
-                model: "meta-llama/llama-4-scout-17b-16e-instruct",
-                response_format: { type: "json_object" },
-                temperature: 0.0
+                base64Image: base64Image,
+                promptInstruction: promptInstruction
             })
         })
         .then(response => {
@@ -182,18 +170,15 @@ window.simulateAIOCRProcessing = function() {
             fillLine.style.width = '90%';
             statusText.innerText = "Iniezione target points completata! ✨";
 
-            // Clean data mapping out of the raw response payload
             const rawContent = data.choices[0].message.content.trim();
             const payload = JSON.parse(rawContent);
             console.log("--- HYDRO SPLIT MATRIX COMPONENT ---", payload);
 
-            // Injection fallback routines to completely eliminate empty slots
             document.getElementById('bill_quotaFissa').value = parseFloat(payload.quota_fissa || 0).toFixed(2);
             document.getElementById('bill_canoniIdrici').value = parseFloat(payload.canoni_idrici || 0).toFixed(2);
             document.getElementById('bill_canoneFognatura').value = parseFloat(payload.fognatura || 0).toFixed(2);
             document.getElementById('bill_canoneDepurazione').value = parseFloat(payload.depurazione || 0).toFixed(2);
             
-            // Safe alignment of sequential oneri data attributes
             document.getElementById('bill_perAcqua').value = parseFloat(payload.perequazione_acqua || 0).toFixed(2);
             document.getElementById('bill_perFognatura').value = parseFloat(payload.perequazione_fognatura || 0).toFixed(2);
             document.getElementById('bill_perDepurazione').value = parseFloat(payload.perequazione_depurazione || 0).toFixed(2);
@@ -214,7 +199,6 @@ window.simulateAIOCRProcessing = function() {
         })
         .catch(err => {
             console.error("LLM Core Exception handled:", err);
-            // Fault tolerance default backup schema
             document.getElementById('bill_quotaFissa').value = "59.21";
             document.getElementById('bill_canoniIdrici').value = "441.32";
             document.getElementById('bill_canoneFognatura').value = "38.88";
