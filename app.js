@@ -113,7 +113,7 @@ window.triggerCameraScanner = function() {
 };
 
 /* ==========================================================================
-   ⚡ ENTERPRISE VISION-LLM CALCULATION ENGINE - PROD DEPLOYMENT
+   ⚡ ENTERPRISE VISION-LLM CALCULATION ENGINE - PROD DEPLOYMENT WITH COMPRESSION
    ========================================================================== */
 window.processBillVisionOCR = function() {
     const fileInput = document.getElementById('hiddenCameraInput');
@@ -125,90 +125,119 @@ window.processBillVisionOCR = function() {
     const statusText = document.getElementById('scannerStatusText');
 
     progressChassis.style.display = 'block';
-    fillLine.style.width = '15%';
-    statusText.innerText = "Inizializzazione modulo Vision IA nativo... 📸";
+    fillLine.style.width = '10%';
+    statusText.innerText = "Lettura file immagine... 📸";
 
     const reader = new FileReader();
     reader.readAsDataURL(file);
-    reader.onload = function() {
-        const base64Image = reader.result.split(',')[1];
-        
-        fillLine.style.width = '45%';
-        statusText.innerText = "Analisi semantica e bilanciamento della matrice... 🔍";
+    reader.onload = function(event) {
+        statusText.innerText = "Ottimizzazione e compressione mobile in corso... 📉";
+        fillLine.style.width = '30%';
 
-        const promptInstruction = `You are a data extraction engine. Analyze the provided Italian water bill image.
-        Locate the section titled "COSA DEVO PAGARE?". Extract the numerical values for the table rows.
-        
-        Return STRICTLY a raw JSON object with float numbers. No markdown blocks, no commentary.
-        
-        Use these exact target keys:
-        - "quota_fissa": The value next to 'Quota Fissa' (e.g., 59.21)
-        - "canoni_idrici": The value next to 'Canoni Idrici' (e.g., 441.32)
-        - "fognatura": The value next to 'Canone Fognatura' (e.g., 38.88)
-        - "depurazione": The value next to 'Canone Depurazione' (e.g., 117.73)
-        
-        - "perequazione_acqua": Find the FIRST 'Oneri Perequazione' row, which is for Acqua (e.g., 12.48)
-        - "perequazione_fognatura": Find the SECOND 'Oneri Perequazione' row, which is for Fognatura (e.g., 12.48)
-        - "perequazione_depurazione": Find the THIRD 'Oneri Perequazione' row, which is for Depurazione (e.g., 12.48)
-        
-        - "spese_spedizione": The value next to 'Spese di Spedizione' or 'Spese di Postalizzazione' (e.g., 0.55)`;
+        const img = new Image();
+        img.src = event.target.result;
+        img.onload = function() {
+            // Configurazione dei limiti geometrici della foto per aggirare il blocco di 4.5MB di Vercel
+            const maxDimension = 1600;
+            let targetWidth = img.width;
+            let targetHeight = img.height;
 
-        // Connessione protetta alla Serverless Function locale su Vercel
-        fetch("/api/ocr", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-                base64Image: base64Image,
-                promptInstruction: promptInstruction
+            if (targetWidth > maxDimension || targetHeight > maxDimension) {
+                if (targetWidth > targetHeight) {
+                    targetHeight = Math.round((targetHeight * maxDimension) / targetWidth);
+                    targetWidth = maxDimension;
+                } else {
+                    targetWidth = Math.round((targetWidth * maxDimension) / targetHeight);
+                    targetHeight = maxDimension;
+                }
+            }
+
+            // Generazione del canvas invisibile di downsampling client-side
+            const canvas = document.createElement('canvas');
+            canvas.width = targetWidth;
+            canvas.height = targetHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+
+            // Esportazione in formato leggero compresso
+            const optimizedBase64 = canvas.toDataURL('image/jpeg', 0.82).split(',')[1];
+
+            fillLine.style.width = '50%';
+            statusText.innerText = "Analisi semantica e bilanciamento della matrice... 🔍";
+
+            const promptInstruction = `You are a data extraction engine. Analyze the provided Italian water bill image.
+            Locate the section titled "COSA DEVO PAGARE?". Extract the numerical values for the table rows.
+            
+            Return STRICTLY a raw JSON object with float numbers. No markdown blocks, no commentary.
+            
+            Use these exact target keys:
+            - "quota_fissa": The value next to 'Quota Fissa' (e.g., 59.21)
+            - "canoni_idrici": The value next to 'Canoni Idrici' (e.g., 441.32)
+            - "fognatura": The value next to 'Canone Fognatura' (e.g., 38.88)
+            - "depurazione": The value next to 'Canone Depurazione' (e.g., 117.73)
+            
+            - "perequazione_acqua": Find the FIRST 'Oneri Perequazione' row, which is for Acqua (e.g., 12.48)
+            - "perequazione_fognatura": Find the SECOND 'Oneri Perequazione' row, which is for Fognatura (e.g., 12.48)
+            - "perequazione_depurazione": Find the THIRD 'Oneri Perequazione' row, which is for Depurazione (e.g., 12.48)
+            
+            - "spese_spedizione": The value next to 'Spese di Spedizione' or 'Spese di Postalizzazione' (e.g., 0.55)`;
+
+            fetch("/api/ocr", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    base64Image: optimizedBase64,
+                    promptInstruction: promptInstruction
+                })
             })
-        })
-        .then(response => {
-            if (!response.ok) throw new Error("API rate limits or connectivity dropped");
-            return response.json();
-        })
-        .then(data => {
-            fillLine.style.width = '90%';
-            statusText.innerText = "Iniezione target points completata! ✨";
+            .then(response => {
+                if (!response.ok) throw new Error("API rate limits or connectivity dropped");
+                return response.json();
+            })
+            .then(data => {
+                fillLine.style.width = '90%';
+                statusText.innerText = "Iniezione target points completata! ✨";
 
-            const rawContent = data.choices[0].message.content.trim();
-            const payload = JSON.parse(rawContent);
-            console.log("--- HYDRO SPLIT MATRIX COMPONENT ---", payload);
+                const rawContent = data.choices[0].message.content.trim();
+                const payload = JSON.parse(rawContent);
+                console.log("--- HYDRO SPLIT MATRIX COMPONENT ---", payload);
 
-            document.getElementById('bill_quotaFissa').value = parseFloat(payload.quota_fissa || 0).toFixed(2);
-            document.getElementById('bill_canoniIdrici').value = parseFloat(payload.canoni_idrici || 0).toFixed(2);
-            document.getElementById('bill_canoneFognatura').value = parseFloat(payload.fognatura || 0).toFixed(2);
-            document.getElementById('bill_canoneDepurazione').value = parseFloat(payload.depurazione || 0).toFixed(2);
-            
-            document.getElementById('bill_perAcqua').value = parseFloat(payload.perequazione_acqua || 0).toFixed(2);
-            document.getElementById('bill_perFognatura').value = parseFloat(payload.perequazione_fognatura || 0).toFixed(2);
-            document.getElementById('bill_perDepurazione').value = parseFloat(payload.perequazione_depurazione || 0).toFixed(2);
-            
-            document.getElementById('bill_speseSpedizione').value = parseFloat(payload.spese_spedizione || 0).toFixed(2);
+                document.getElementById('bill_quotaFissa').value = parseFloat(payload.quota_fissa || 0).toFixed(2);
+                document.getElementById('bill_canoniIdrici').value = parseFloat(payload.canoni_idrici || 0).toFixed(2);
+                document.getElementById('bill_canoneFognatura').value = parseFloat(payload.fognatura || 0).toFixed(2);
+                document.getElementById('bill_canoneDepurazione').value = parseFloat(payload.depurazione || 0).toFixed(2);
+                
+                document.getElementById('bill_perAcqua').value = parseFloat(payload.perequazione_acqua || 0).toFixed(2);
+                document.getElementById('bill_perFognatura').value = parseFloat(payload.perequazione_fognatura || 0).toFixed(2);
+                document.getElementById('bill_perDepurazione').value = parseFloat(payload.perequazione_depurazione || 0).toFixed(2);
+                
+                document.getElementById('bill_speseSpedizione').value = parseFloat(payload.spese_spedizione || 0).toFixed(2);
 
-            recalculateBillTotalsAndStandbyStates();
+                recalculateBillTotalsAndStandbyStates();
 
-            openMagicModal({
-                title: "Scansione Verificata",
-                description: "Matrice sequenziale completata con successo. Tutti i parametri di perequazione sono stati agganciati.",
-                btnGradient: "linear-gradient(135deg, #22d3ee, #3b82f6)",
-                icon: "⚡",
-                bgIcon: "rgba(34, 211, 238, 0.1)",
-                borderIcon: "rgba(34, 211, 238, 0.2)",
-                buttons: [{ text: "Continua", type: "primary", action: null }]
+                openMagicModal({
+                    title: "Scansione Verificata",
+                    description: "Matrice sequenziale completata con successo. Tutti i parametri di perequazione sono stati agganciati.",
+                    btnGradient: "linear-gradient(135deg, #22d3ee, #3b82f6)",
+                    icon: "⚡",
+                    bgIcon: "rgba(34, 211, 238, 0.1)",
+                    borderIcon: "rgba(34, 211, 238, 0.2)",
+                    buttons: [{ text: "Continua", type: "primary", action: null }]
+                });
+            })
+            .catch(err => {
+                console.error("LLM Core Exception handled:", err);
+                document.getElementById('bill_quotaFissa').value = "59.21";
+                document.getElementById('bill_canoniIdrici').value = "441.32";
+                document.getElementById('bill_canoneFognatura').value = "38.88";
+                document.getElementById('bill_canoneDepurazione').value = "117.73";
+                recalculateBillTotalsAndStandbyStates();
+            })
+            .finally(() => {
+                progressChassis.style.display = 'none';
+                fileInput.value = "";
             });
-        })
-        .catch(err => {
-            console.error("LLM Core Exception handled:", err);
-            document.getElementById('bill_quotaFissa').value = "59.21";
-            document.getElementById('bill_canoniIdrici').value = "441.32";
-            document.getElementById('bill_canoneFognatura').value = "38.88";
-            document.getElementById('bill_canoneDepurazione').value = "117.73";
-            recalculateBillTotalsAndStandbyStates();
-        })
-        .finally(() => {
-            progressChassis.style.display = 'none';
-            fileInput.value = "";
-        });
+        };
     };
 };
 
