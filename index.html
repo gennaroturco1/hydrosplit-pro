@@ -47,19 +47,13 @@
 <div class="bill-section-header-responsive">
     <h3 class="section-tag" style="margin-bottom: 0;">1. COSA DEVO PAGARE? (Specchio Bolletta)</h3>
     
-    <div style="display: flex; gap: 10px; margin-top: 12px; width: 100%; flex-wrap: wrap;">
-        
-        <button type="button" class="btn-scan-trigger" style="flex: 1; min-width: 140px; margin: 0;" onclick="document.getElementById('androidFriendlyInput').setAttribute('capture', 'environment'); document.getElementById('androidFriendlyInput').click();">
-            📸 Scatta Foto
+    <div style="margin-top: 10px;">
+        <button type="button" class="btn-scan-trigger" style="width: 100%;" onclick="triggerSmartScanner()">
+            📸 Scansiona Bolletta con Foto
         </button>
         
-        <button type="button" class="btn-scan-trigger" style="flex: 1; min-width: 140px; margin: 0; background: #1e293b; border: 1px solid rgba(255,255,255,0.1);" onclick="document.getElementById('androidFriendlyInput').removeAttribute('capture'); document.getElementById('androidFriendlyInput').click();">
-            📁 Galleria / File
-        </button>
-        
+        <input type="file" id="androidFriendlyInput" accept="image/*" style="display: none;" onchange="processBillVisionOCR()">
     </div>
-    
-    <input type="file" id="androidFriendlyInput" accept="image/*" style="display: none;" onchange="processBillVisionOCR()">
 </div>
 
                 <div id="ocrScannerProgressBar" class="scanner-progress-container" style="display: none;">

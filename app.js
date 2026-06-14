@@ -600,3 +600,21 @@ window.dismissLandingScreen = function() {
         mainApp.classList.add('app-active-reveal');
     }
 };
+
+window.triggerSmartScanner = function() {
+    const fileInput = document.getElementById('androidFriendlyInput');
+    if (!fileInput) return;
+
+    // Rileva se l'utente sta navigando da un dispositivo Android
+    const isAndroid = /Android/i.test(navigator.userAgent);
+
+    if (isAndroid) {
+        // Trucco chirurgico per Android: rimuoviamo momentaneamente display:none 
+        // e lo forziamo ad aprirsi in modalità nativa pura per saltare l'overlay di Google Foto
+        fileInput.removeAttribute('capture'); 
+        fileInput.click();
+    } else {
+        // Su iPhone e Desktop prosegue con la pipeline nativa standard a tre opzioni
+        fileInput.click();
+    }
+};
