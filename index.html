@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>HydroSplit Pro Condominium</title>
+    <title>HydroSplit Pro</title>
     <link rel="icon" href="data:,">
     
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -20,7 +20,7 @@
     <div id="appLandingScreen" class="landing-overlay">
         <div class="landing-content">
             <h1 class="landing-title">HydroSplit <span class="accent-text">Pro</span></h1>
-            <p class="landing-subtitle">La piattaforma intelligente per la ripartizione dinamica, l'audit e il bilanciamento dei sotto-contatori idrici condominiali.</p>
+            <p class="landing-subtitle">La piattaforma intelligente per la ripartizione dinamica, l'audit e il bilanciamento dei sotto-contatori idrici.</p>
             
             <button type="button" class="btn-landing-start" onclick="dismissLandingScreen()">
                 Inizia Elaborazione ✨
@@ -34,26 +34,31 @@
 
     <div class="main-container app-blurred-ready" id="mainAppContainer">
         
-        <div class="app-header">
-            <span class="badge">⚡ HydroSplit Pro Condominium v11.0</span>
-            <h1 class="brand-title">HydroSplit <span class="accent-text">Pro</span></h1>
-            <p class="brand-subtitle">Ripartizione dinamica sotto-contatori per condomini scalabili.</p>
+        <div class="app-header" style="text-align: center; padding: 24px 20px 16px 20px;">
+            <h1 class="brand-title" style="font-size: 32px; font-weight: 800; letter-spacing: -0.03em; margin: 0;">
+                HydroSplit <span class="accent-text" style="font-weight: 900;">Pro</span>
+            </h1>
+            <p class="brand-subtitle" style="font-size: 14px; color: #64748b; margin-top: 6px;">
+                Ripartizione dinamica e analisi intelligente dei consumi idrici.
+            </p>
         </div>
 
         <div class="form-body">
             
             <div class="section-group">
                 
-<div class="bill-section-header-responsive">
-    <h3 class="section-tag" style="margin-bottom: 0;">1. COSA DEVO PAGARE? (Specchio Bolletta)</h3>
-    <div style="margin-top: 10px;">
-        <button type="button" class="btn-scan-trigger" style="width: 100%;" onclick="triggerSmartScanner()">
-            📸 Scansiona Bolletta con Foto
-        </button>
-        
-        <input type="file" id="androidFriendlyInput" accept="image/*" style="display: none;" onchange="processBillVisionOCR()">
-    </div>
-</div>
+                <div class="bill-section-header-responsive">
+                    <h3 class="section-tag" style="margin-bottom: 0;">1. COSA DEVO PAGARE? (Specchio Bolletta)</h3>
+                    <div style="margin-top: 12px;">
+                        <button type="button" class="btn-scan-trigger" style="width: 100%; margin: 0;" onclick="triggerSmartScanner()">
+                            📸 Scansiona Bolletta con Foto
+                        </button>
+                        
+                        <input type="file" id="androidFriendlyInput" accept="image/*" style="display: none;" onchange="processBillVisionOCR()">
+                        <input type="file" id="androidFriendlyInputCamera" accept="image/*" capture="environment" style="display: none;" onchange="handleSmartUpload(this)">
+                        <input type="file" id="androidFriendlyInputGallery" accept="image/*" style="display: none;" onchange="handleSmartUpload(this)">
+                    </div>
+                </div>
 
                 <div id="ocrScannerProgressBar" class="scanner-progress-container" style="display: none;">
                     <div class="scanner-text-wrapper">
@@ -150,6 +155,12 @@
                 </div>
 
                 <div id="printOnlyAuditContainer"></div>
+            </div>
+            
+            <div class="app-premium-footer" style="text-align: center; padding: 32px 0 8px 0; border-top: 1px solid rgba(255,255,255,0.02); margin-top: 32px;">
+                <p style="font-size: 10px; color: #334155; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; margin: 0;">
+                    HydroSplit Pro • Production Build v11.0
+                </p>
             </div>
             
         </div>
