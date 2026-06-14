@@ -52,7 +52,8 @@
             📸 Scansiona Bolletta con Foto
         </button>
         
-        <input type="file" id="androidFriendlyInput" accept="image/*" style="display: none;" onchange="processBillVisionOCR()">
+        <input type="file" id="androidFriendlyInputCamera" accept="image/*" capture="environment" style="display: none;" onchange="handleSmartUpload(this)">
+        <input type="file" id="androidFriendlyInputGallery" accept="image/*" style="display: none;" onchange="handleSmartUpload(this)">
     </div>
 </div>
 
