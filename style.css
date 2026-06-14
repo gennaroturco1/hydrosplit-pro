@@ -328,33 +328,34 @@ input::placeholder { color: #334155; }
 }
 
 /* ==========================================================================
-   🖨️ CONTROLLO RIGIDO DI STAMPA A4: MASSIMA COMPRESSIONE GEOMETRICA PER PAGINA SINGOLA
+   🖨️ CONTROLLO ASSETTO RIGIDO A4: ZERO SALTI PAGINA (MAX 1-6 UTENZE)
    ========================================================================== */
 @media print {
     @page { 
         size: A4 portrait; 
-        margin: 5mm 8mm 5mm 8mm !important; /* Margini minimi assoluti */
+        margin: 4mm 6mm 4mm 6mm !important; /* Margini fisici ridotti all'osso per guadagnare altezza */
     }
     
-    body { 
+    html, body { 
         background: #ffffff !important; 
         color: #0f172a !important; 
         padding: 0 !important; 
         margin: 0 !important; 
-        font-size: 9.5px !important; 
+        font-size: 9px !important; /* Font leggermente più compatto per recuperare interlinea */
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
     
-    /* TRUCCO SUPREMO: Scala l'intero contenitore del report al 93% per bloccarlo in un'unica pagina */
+    /* 🔑 TRUCCO DA INGEGNERIA SOFTWARE: Applica lo zoom hardware nativo al 95% per bypassare il controllo manuale */
     #resultsCard { 
         display: block !important; 
         background: transparent !important;
         padding: 0 !important;
         margin: 0 !important;
-        transform: scale(0.93) !important;
+        zoom: 95% !important; /* Forza il browser a simulare il rimpicciolimento che facevi tu a mano */
+        transform: scale(0.95) !important;
         transform-origin: top left !important;
-        width: 107.5% !important; /* Bilancia la riduzione della scala per non perdere l'allineamento a destra */
+        width: 105.2% !important; 
     }
     
     .main-container { 
@@ -366,7 +367,7 @@ input::placeholder { color: #334155; }
         margin: 0 !important; 
     }
     
-    /* Elimina istantaneamente tutte le sezioni interattive a schermo */
+    /* Rimozione totale degli elementi operativi dello schermo */
     .app-header, 
     .form-body > .section-group:nth-child(1), 
     .form-body > .section-group:nth-child(2), 
@@ -383,18 +384,18 @@ input::placeholder { color: #334155; }
     
     #printOnlyInvoiceHeader { 
         display: block !important; 
-        margin-bottom: 8px !important; 
+        margin-bottom: 6px !important; 
         break-after: avoid !important; 
     }
     
-    /* Ottimizzazione millesimale per la Tabella dei Risultati */
+    /* Tabella dei riparti ultra-compressa */
     .table-frame { 
         background: transparent !important; 
         border: 1px solid #cbd5e1 !important; 
         border-radius: 6px !important; 
         max-height: none !important; 
         overflow: visible !important; 
-        margin-bottom: 8px !important;
+        margin-bottom: 6px !important;
     }
     
     .premium-table { 
@@ -406,8 +407,8 @@ input::placeholder { color: #334155; }
     .premium-table th { 
         background: #0f172a !important; 
         color: #ffffff !important; 
-        padding: 5px 6px !important; 
-        font-size: 8pt !important; 
+        padding: 4px 6px !important; /* Padding ridotto per schiacciare l'altezza della tabella */
+        font-size: 7.5pt !important; 
         position: static !important; 
         text-transform: uppercase !important;
     }
@@ -419,9 +420,9 @@ input::placeholder { color: #334155; }
     .premium-table td { 
         color: #0f172a !important; 
         border-bottom: 1px solid #cbd5e1 !important; 
-        padding: 5px 6px !important; 
+        padding: 4px 6px !important; 
         background: transparent !important; 
-        font-size: 8.5pt !important; 
+        font-size: 8pt !important; 
     }
     
     .premium-table td:last-child {
@@ -433,72 +434,70 @@ input::placeholder { color: #334155; }
         background: #f8fafc !important; 
         font-weight: 700 !important;
         border-top: 1px solid #cbd5e1 !important;
-        padding: 5px 6px !important;
+        padding: 4px 6px !important;
     }
     
-    /* 📋 STRUTTURA FLEX-GEOMETRICA BILANCIATA PER I CONTATORI DI AUDIT */
+    /* 📋 SEZIONE SCHEDE AUDIT CONTATORI INQUILINI */
     #printOnlyAuditContainer { 
         display: block !important; 
-        margin-top: 8px !important; 
+        margin-top: 6px !important; 
         break-inside: avoid !important;
     }
     
     #printOnlyAuditContainer h3 {
-        font-size: 9.5pt !important;
+        font-size: 9pt !important;
         color: #0f172a !important;
-        margin-bottom: 4px !important;
+        margin-bottom: 3px !important;
     }
     
-    /* Griglia orizzontale flessibile che centra gli elementi quando vanno a capo */
     #printOnlyAuditContainer > div {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: wrap !important;
         justify-content: center !important; 
-        gap: 8px !important;
+        gap: 6px !important;
         width: 100% !important;
     }
     
-    /* Blocchi bloccati al 33% (massimo 3 per riga) */
     .print-audit-card-wrap { 
         flex: 0 0 auto !important;
-        width: calc(33.333% - 6px) !important; 
-        min-width: 180px !important;
+        width: calc(33.333% - 5px) !important; /* Massimo 3 per riga */
+        min-width: 170px !important;
         margin-bottom: 0 !important;
         break-inside: avoid !important; 
         box-sizing: border-box !important;
     }
     
-    /* Se c'è solo un utente, prende il centro con eleganza proporzionale */
     #printOnlyAuditContainer > div > :only-child {
-        width: 45% !important;
+        width: 40% !important;
     }
 
+    /* Schiacciamento definitivo dell'ingombro verticale delle schedine */
     .print-audit-card-wrap > div {
         background: #f8fafc !important;
         border: 1px solid #cbd5e1 !important;
         border-radius: 6px !important;
-        padding: 5px 8px !important;
-        height: 100% !important;
+        padding: 4px 6px !important; /* Compressione del testo interno */
+        height: auto !important;
         text-align: left !important;
     }
     
     .print-audit-card-wrap h4 {
-        font-size: 8.5pt !important;
+        font-size: 8pt !important;
         border-bottom: 1.5px solid #0ea5e9 !important;
         padding-bottom: 1px !important;
-        margin-bottom: 3px !important;
+        margin-bottom: 2px !important;
         text-transform: uppercase !important;
         color: #0f172a !important;
     }
     
     .print-audit-card-wrap span {
-        font-size: 7pt !important;
+        font-size: 6.5pt !important;
         color: #64748b !important;
     }
     
     .print-audit-card-wrap div {
-        font-size: 8pt !important;
+        font-size: 7.5pt !important;
         margin-bottom: 1px !important;
         color: #1e293b !important;
     }
