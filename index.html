@@ -46,13 +46,11 @@
                 
 <div class="bill-section-header-responsive">
     <h3 class="section-tag" style="margin-bottom: 0;">1. COSA DEVO PAGARE? (Specchio Bolletta)</h3>
-    
     <div style="margin-top: 10px;">
         <button type="button" class="btn-scan-trigger" style="width: 100%;" onclick="document.getElementById('hiddenCameraInput').click()">
             📸 Scansiona Bolletta con Foto
         </button>
-        
-        <input type="file" id="hiddenCameraInput" accept="image/*" capture="environment" style="display: none;" onchange="processBillVisionOCR()">
+        <input type="file" id="hiddenCameraInput" accept="image/*" style="display: none;" onchange="processBillVisionOCR()">
     </div>
 </div>
 
