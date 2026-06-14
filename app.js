@@ -108,15 +108,17 @@ function recalculateBillTotalsAndStandbyStates() {
     document.getElementById('totalBill').value = totaleComplessivo > 0 ? totaleComplessivo.toFixed(2) : "";
 }
 
+// Allineato al nuovo ID sbloccato per Android
 window.triggerCameraScanner = function() {
-    document.getElementById('hiddenCameraInput').click();
+    document.getElementById('androidFriendlyInput').click();
 };
 
 /* ==========================================================================
    ⚡ ENTERPRISE VISION-LLM CALCULATION ENGINE - PROD DEPLOYMENT WITH COMPRESSION
    ========================================================================== */
 window.processBillVisionOCR = function() {
-    const fileInput = document.getElementById('hiddenCameraInput');
+    // Aggiornato all'ID androidFriendlyInput per sbloccare la fotocamera su Chrome Android
+    const fileInput = document.getElementById('androidFriendlyInput');
     if (!fileInput.files || fileInput.files.length === 0) return;
 
     const file = fileInput.files[0];
@@ -137,7 +139,6 @@ window.processBillVisionOCR = function() {
         const img = new Image();
         img.src = event.target.result;
         img.onload = function() {
-            // Configurazione dei limiti geometrici della foto per aggirare il blocco di 4.5MB di Vercel
             const maxDimension = 1600;
             let targetWidth = img.width;
             let targetHeight = img.height;
@@ -152,14 +153,12 @@ window.processBillVisionOCR = function() {
                 }
             }
 
-            // Generazione del canvas invisibile di downsampling client-side
             const canvas = document.createElement('canvas');
             canvas.width = targetWidth;
             canvas.height = targetHeight;
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
 
-            // Esportazione in formato leggero compresso
             const optimizedBase64 = canvas.toDataURL('image/jpeg', 0.82).split(',')[1];
 
             fillLine.style.width = '50%';
@@ -235,7 +234,7 @@ window.processBillVisionOCR = function() {
             })
             .finally(() => {
                 progressChassis.style.display = 'none';
-                fileInput.value = "";
+                fileInput.value = ""; // Svuota correttamente il nuovo input sbloccato
             });
         };
     };
