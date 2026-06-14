@@ -328,12 +328,12 @@ input::placeholder { color: #334155; }
 }
 
 /* ==========================================================================
-   🖨️ DETTAGLIO RIGIDO DI STAMPA A4 (OTTIMIZZAZIONE PAGINA SINGOLA 1-3 UTENZE)
+   🖨️ CONTROLLO RIGIDO DI STAMPA A4: MASSIMA COMPRESSIONE GEOMETRICA PER PAGINA SINGOLA
    ========================================================================== */
 @media print {
     @page { 
         size: A4 portrait; 
-        margin: 10mm 12mm 10mm 12mm !important; 
+        margin: 5mm 8mm 5mm 8mm !important; /* Margini minimi assoluti */
     }
     
     body { 
@@ -341,9 +341,20 @@ input::placeholder { color: #334155; }
         color: #0f172a !important; 
         padding: 0 !important; 
         margin: 0 !important; 
-        font-size: 11px !important;
+        font-size: 9.5px !important; /* Forza un font leggermente più piccolo ed elegante */
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
+    }
+    
+    /* TRUCCO SUPREMO: Scala l'intero contenitore del report al 93% per bloccarlo in un'unica pagina */
+    #resultsCard { 
+        display: block !important; 
+        background: transparent !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        transform: scale(0.93) !important;
+        transform-origin: top left !important;
+        width: 107.5% !important; /* Bilancia la riduzione della scala per non perdere l'allineamento a destra */
     }
     
     .main-container { 
@@ -355,7 +366,7 @@ input::placeholder { color: #334155; }
         margin: 0 !important; 
     }
     
-    /* Nasconde tutto il pannello operativo di inserimento dati e navigazione */
+    /* Elimina istantaneamente tutte le sezioni interattive a schermo */
     .app-header, 
     .form-body > .section-group:nth-child(1), 
     .form-body > .section-group:nth-child(2), 
@@ -370,27 +381,20 @@ input::placeholder { color: #334155; }
         display: none !important; 
     }
     
-    #resultsCard { 
-        display: block !important; 
-        background: transparent !important;
-        padding: 0 !important;
-        margin: 0 !important;
-    }
-    
     #printOnlyInvoiceHeader { 
         display: block !important; 
-        margin-bottom: 12px !important; 
+        margin-bottom: 8px !important; 
         break-after: avoid !important; 
     }
     
-    /* Compressione geometrica della tabella dei riparti */
+    /* Ottimizzazione millesimale per la Tabella dei Risultati */
     .table-frame { 
         background: transparent !important; 
         border: 1px solid #cbd5e1 !important; 
-        border-radius: 8px !important; 
+        border-radius: 6px !important; 
         max-height: none !important; 
         overflow: visible !important; 
-        margin-bottom: 12px !important;
+        margin-bottom: 8px !important;
     }
     
     .premium-table { 
@@ -402,8 +406,8 @@ input::placeholder { color: #334155; }
     .premium-table th { 
         background: #0f172a !important; 
         color: #ffffff !important; 
-        padding: 6px 8px !important; 
-        font-size: 8.5pt !important; 
+        padding: 5px 6px !important; 
+        font-size: 8pt !important; 
         position: static !important; 
         text-transform: uppercase !important;
     }
@@ -415,12 +419,11 @@ input::placeholder { color: #334155; }
     .premium-table td { 
         color: #0f172a !important; 
         border-bottom: 1px solid #cbd5e1 !important; 
-        padding: 6px 8px !important; 
+        padding: 5px 6px !important; 
         background: transparent !important; 
-        font-size: 9pt !important; 
+        font-size: 8.5pt !important; 
     }
     
-    /* Evidenziazione colore per l'importo finale dovuto */
     .premium-table td:last-child {
         color: #0ea5e9 !important;
         font-weight: 800 !important;
@@ -430,27 +433,27 @@ input::placeholder { color: #334155; }
         background: #f8fafc !important; 
         font-weight: 700 !important;
         border-top: 1px solid #cbd5e1 !important;
+        padding: 5px 6px !important;
     }
     
-    /* ⚡ SVOLTA STRUTTURALE: Disposizione forzata orizzontale per 1-3 contatori dell'audit */
+    /* Disposizione orizzontale forzata per le 1-3 utenze dell'audit */
     #printOnlyAuditContainer { 
         display: block !important; 
-        margin-top: 10px !important; 
+        margin-top: 8px !important; 
         break-inside: avoid !important;
     }
     
     #printOnlyAuditContainer h3 {
-        font-size: 10.5pt !important;
+        font-size: 9.5pt !important;
         color: #0f172a !important;
-        margin-bottom: 6px !important;
+        margin-bottom: 4px !important;
     }
     
-    /* Modifica l'involucro flex dei blocchi per costringerli sulla stessa riga */
     #printOnlyAuditContainer > div {
         display: flex !important;
         flex-direction: row !important;
         flex-wrap: nowrap !important;
-        gap: 10px !important;
+        gap: 8px !important;
         width: 100% !important;
     }
     
@@ -465,23 +468,23 @@ input::placeholder { color: #334155; }
     .print-audit-card-wrap > div {
         background: #f8fafc !important;
         border: 1px solid #cbd5e1 !important;
-        border-radius: 8px !important;
-        padding: 8px 10px !important;
+        border-radius: 6px !important;
+        padding: 6px 8px !important;
     }
     
     .print-audit-card-wrap h4 {
-        font-size: 9pt !important;
+        font-size: 8.5pt !important;
         border-bottom: 1.5px solid #0ea5e9 !important;
-        padding-bottom: 2px !important;
-        margin-bottom: 4px !important;
+        padding-bottom: 1px !important;
+        margin-bottom: 3px !important;
     }
     
     .print-audit-card-wrap span {
-        font-size: 7.5pt !important;
+        font-size: 7pt !important;
     }
     
     .print-audit-card-wrap div {
-        font-size: 8.5pt !important;
-        margin-bottom: 2px !important;
+        font-size: 8pt !important;
+        margin-bottom: 1px !important;
     }
 }
