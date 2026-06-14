@@ -341,7 +341,7 @@ input::placeholder { color: #334155; }
         color: #0f172a !important; 
         padding: 0 !important; 
         margin: 0 !important; 
-        font-size: 9.5px !important; /* Forza un font leggermente più piccolo ed elegante */
+        font-size: 9.5px !important; 
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
@@ -436,7 +436,7 @@ input::placeholder { color: #334155; }
         padding: 5px 6px !important;
     }
     
-    /* Disposizione orizzontale forzata per le 1-3 utenze dell'audit */
+    /* 📋 STRUTTURA FLEX-GEOMETRICA BILANCIATA PER I CONTATORI DI AUDIT */
     #printOnlyAuditContainer { 
         display: block !important; 
         margin-top: 8px !important; 
@@ -449,27 +449,38 @@ input::placeholder { color: #334155; }
         margin-bottom: 4px !important;
     }
     
+    /* Griglia orizzontale flessibile che centra gli elementi quando vanno a capo */
     #printOnlyAuditContainer > div {
         display: flex !important;
         flex-direction: row !important;
-        flex-wrap: nowrap !important;
+        flex-wrap: wrap !important;
+        justify-content: center !important; 
         gap: 8px !important;
         width: 100% !important;
     }
     
+    /* Blocchi bloccati al 33% (massimo 3 per riga) */
     .print-audit-card-wrap { 
-        flex: 1 !important;
-        width: auto !important;
-        max-width: none !important;
+        flex: 0 0 auto !important;
+        width: calc(33.333% - 6px) !important; 
+        min-width: 180px !important;
         margin-bottom: 0 !important;
         break-inside: avoid !important; 
+        box-sizing: border-box !important;
     }
     
+    /* Se c'è solo un utente, prende il centro con eleganza proporzionale */
+    #printOnlyAuditContainer > div > :only-child {
+        width: 45% !important;
+    }
+
     .print-audit-card-wrap > div {
         background: #f8fafc !important;
         border: 1px solid #cbd5e1 !important;
         border-radius: 6px !important;
-        padding: 6px 8px !important;
+        padding: 5px 8px !important;
+        height: 100% !important;
+        text-align: left !important;
     }
     
     .print-audit-card-wrap h4 {
@@ -477,14 +488,18 @@ input::placeholder { color: #334155; }
         border-bottom: 1.5px solid #0ea5e9 !important;
         padding-bottom: 1px !important;
         margin-bottom: 3px !important;
+        text-transform: uppercase !important;
+        color: #0f172a !important;
     }
     
     .print-audit-card-wrap span {
         font-size: 7pt !important;
+        color: #64748b !important;
     }
     
     .print-audit-card-wrap div {
         font-size: 8pt !important;
         margin-bottom: 1px !important;
+        color: #1e293b !important;
     }
 }
