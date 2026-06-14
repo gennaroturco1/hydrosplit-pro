@@ -112,10 +112,13 @@ function recalculateBillTotalsAndStandbyStates() {
    ⚡ MULTI-PLATFORM SMART SCANNER INTERFACE
    ========================================================================== */
 window.triggerSmartScanner = function() {
+    const mainInput = document.getElementById('androidFriendlyInput');
+    if (!mainInput) return;
+
     const isAndroid = /Android/i.test(navigator.userAgent);
 
     if (isAndroid) {
-        // Interfaccia personalizzata per bypassare il blocco nativo di Google Foto su Android
+        // Apriamo il tuo modale custom
         openMagicModal({
             title: "Sorgente Immagine",
             description: "Seleziona se desideri scattare una foto della bolletta in tempo reale o caricarla dalla galleria.",
@@ -127,18 +130,25 @@ window.triggerSmartScanner = function() {
                 { 
                     text: "📁 Galleria / File", 
                     type: "secondary", 
-                    action: () => document.getElementById('androidFriendlyInputGallery').click() 
+                    action: () => {
+                        mainInput.removeAttribute('capture'); // Rimuove la fotocamera forzata
+                        mainInput.click();
+                    } 
                 },
                 { 
                     text: "📸 Fotocamera", 
                     type: "primary", 
-                    action: () => document.getElementById('androidFriendlyInputCamera').click() 
+                    action: () => {
+                        mainInput.setAttribute('capture', 'environment'); // Forza l'hardware della fotocamera
+                        mainInput.click();
+                    } 
                 }
             ]
         });
     } else {
-        // Menu nativo standard ad alte prestazioni per iOS e Desktop
-        document.getElementById('androidFriendlyInputGallery').click();
+        // Su iPhone rimuoviamo capture per lasciare il menu nativo a 3 opzioni perfetto
+        mainInput.removeAttribute('capture');
+        mainInput.click();
     }
 };
 
