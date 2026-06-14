@@ -108,12 +108,14 @@ function recalculateBillTotalsAndStandbyStates() {
     document.getElementById('totalBill').value = totaleComplessivo > 0 ? totaleComplessivo.toFixed(2) : "";
 }
 
-// Gestore intelligente del trigger per sdoppiare l'esperienza iOS / Android
+/* ==========================================================================
+   ⚡ MULTI-PLATFORM SMART SCANNER INTERFACE
+   ========================================================================== */
 window.triggerSmartScanner = function() {
     const isAndroid = /Android/i.test(navigator.userAgent);
 
     if (isAndroid) {
-        // Mostra il modale interno custom per aggirare il blocco di Google Foto su Android
+        // Interfaccia personalizzata per bypassare il blocco nativo di Google Foto su Android
         openMagicModal({
             title: "Sorgente Immagine",
             description: "Seleziona se desideri scattare una foto della bolletta in tempo reale o caricarla dalla galleria.",
@@ -135,31 +137,29 @@ window.triggerSmartScanner = function() {
             ]
         });
     } else {
-        // Su iPhone e Desktop apre istantaneamente il menu di sistema nativo a 3 opzioni
+        // Menu nativo standard ad alte prestazioni per iOS e Desktop
         document.getElementById('androidFriendlyInputGallery').click();
     }
 };
 
-// Convoglia i file catturati nell'input virtuale dell'OCR principale
 window.handleSmartUpload = function(element) {
     if (!element.files || element.files.length === 0) return;
     
     const mainInput = document.getElementById('androidFriendlyInput');
     if (mainInput) {
-        // Crea una lista di file virtuale per l'input principale
+        // Iniezione virtuale sicura del file multimediale tramite DataTransfer API
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(element.files[0]);
         mainInput.files = dataTransfer.files;
         
-        // Avvia la pipeline di scansione originale
         window.processBillVisionOCR();
     }
 };
+
 /* ==========================================================================
-   ⚡ ENTERPRISE VISION-LLM CALCULATION ENGINE - PROD DEPLOYMENT WITH COMPRESSION
+   ⚡ ENTERPRISE VISION-LLM CALCULATION ENGINE WITH CLIENT-SIDE COMPRESSION
    ========================================================================== */
 window.processBillVisionOCR = function() {
-    // Aggiornato all'ID androidFriendlyInput per sbloccare la fotocamera su Chrome Android
     const fileInput = document.getElementById('androidFriendlyInput');
     if (!fileInput.files || fileInput.files.length === 0) return;
 
@@ -276,12 +276,15 @@ window.processBillVisionOCR = function() {
             })
             .finally(() => {
                 progressChassis.style.display = 'none';
-                fileInput.value = ""; // Svuota correttamente il nuovo input sbloccato
+                fileInput.value = ""; 
             });
         };
     };
 };
 
+/* ==========================================================================
+   ⚡ MATHEMATICAL MOTORE DI RIPARTIZIONE CONDOMINIALE
+   ========================================================================== */
 window.calculateSplit = function() {
     const totalBill = parseFloat(document.getElementById('totalBill').value) || 0;
     let hasErrors = false;
@@ -523,6 +526,9 @@ window.calculateSplit = function() {
     executeAutomaticRolloverStorage(units, totaleFissiImponibile);
 };
 
+/* ==========================================================================
+   ⚡ INTERFACE TABS & RENDER OPERATIONS
+   ========================================================================== */
 function renderActiveTabContent(unitId) {
     const targetUnit = currentActiveUnitData.find(u => u.id === unitId);
     if (!targetUnit) return;
@@ -550,6 +556,9 @@ window.generatePrintPDF = function() {
     window.print();
 };
 
+/* ==========================================================================
+   ⚡ STORAGE SYSTEM, MODALS & SYSTEM RESET
+   ========================================================================== */
 function executeAutomaticRolloverStorage(units, totalFixed) {
     const itemsData = {}; document.querySelectorAll('.bill-raw-input').forEach(i => { itemsData[i.id] = i.value; });
     const dataToSave = { 
@@ -640,49 +649,5 @@ window.dismissLandingScreen = function() {
         landing.style.opacity = '0';
         landing.style.visibility = 'hidden';
         mainApp.classList.add('app-active-reveal');
-    }
-};
-
-window.triggerSmartScanner = function() {
-    // Rileva se l'utente è su un dispositivo Android
-    const isAndroid = /Android/i.test(navigator.userAgent);
-
-    if (isAndroid) {
-        // Sfrutta il tuo modulo modale personalizzato per sbloccare l'hardware di Android
-        openMagicModal({
-            title: "Sorgente Immagine",
-            description: "Seleziona se desideri scattare una foto della bolletta in tempo reale o caricarla dalla galleria.",
-            btnGradient: "linear-gradient(135deg, #22d3ee, #3b82f6)",
-            icon: "📸",
-            bgIcon: "rgba(34, 211, 238, 0.1)",
-            borderIcon: "rgba(34, 211, 238, 0.2)",
-            buttons: [
-                { 
-                    text: "📁 Galleria / File", 
-                    type: "secondary", 
-                    action: () => document.getElementById('androidFriendlyInputGallery').click() 
-                },
-                { 
-                    text: "📸 Fotocamera", 
-                    type: "primary", 
-                    action: () => document.getElementById('androidFriendlyInputCamera').click() 
-                }
-            ]
-        });
-    } else {
-        // Su iPhone e Desktop apre direttamente il menu nativo di sistema
-        document.getElementById('androidFriendlyInputGallery').click();
-    }
-};
-
-// Funzione helper di smistamento (incollala subito sotto la funzione sopra)
-window.handleSmartUpload = function(element) {
-    if (!element.files || element.files.length === 0) return;
-    
-    // Aggancia i file all'input virtuale che l'app usa per l'elaborazione OCR
-    const mainInput = document.getElementById('androidFriendlyInput');
-    if (mainInput) {
-        mainInput.files = element.files;
-        window.processBillVisionOCR();
     }
 };
