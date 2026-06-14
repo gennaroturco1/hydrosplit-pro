@@ -266,15 +266,15 @@ window.processBillVisionOCR = function() {
 
                 recalculateBillTotalsAndStandbyStates();
 
-                openMagicModal({
-                    title: "Scansione Verificata",
-                    description: "Matrice sequenziale completata con successo. Tutti i parametri di perequazione sono stati agganciati.",
-                    btnGradient: "linear-gradient(135deg, #22d3ee, #3b82f6)",
-                    icon: "⚡",
-                    bgIcon: "rgba(34, 211, 238, 0.1)",
-                    borderIcon: "rgba(34, 211, 238, 0.2)",
-                    buttons: [{ text: "Continua", type: "primary", action: null }]
-                });
+openMagicModal({
+    title: "Data Core Agganciato 🤖",
+    description: "Scansione completata. Il motore neurale di HydroSplit ha estratto i nodi di spesa e ottimizzato il riparto millesimale.",
+    btnGradient: "linear-gradient(135deg, #22d3ee, #3b82f6)",
+    icon: "🤖",
+    bgIcon: "rgba(34, 211, 238, 0.1)",
+    borderIcon: "rgba(34, 211, 238, 0.2)",
+    buttons: [{ text: "Accedi ai Risultati ⚡", type: "primary", action: null }]
+});
             })
             .catch(err => {
                 console.error("LLM Core Exception handled:", err);
