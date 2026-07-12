@@ -164,7 +164,7 @@ window.handleSmartUpload = function(element) {
 };
 
 /* ==========================================================================
-   ⚡ GOOGLE VISION OCR ENGINE WITH CLIENT-SIDE COMPRESSION
+   ⚡ GOOGLE VISION OCR ENGINE - CHIRURGIA AVANZATA
    ========================================================================== */
 window.processBillVisionOCR = function() {
     const fileInput = document.getElementById('androidFriendlyInput');
@@ -182,7 +182,7 @@ window.processBillVisionOCR = function() {
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = function(event) {
-        if(statusText) statusText.innerText = "Ottimizzazione e compressione mobile in corso... 📉";
+        if(statusText) statusText.innerText = "Ottimizzazione in corso... 📉";
         if(fillLine) fillLine.style.width = '30%';
 
         const img = new Image();
@@ -211,7 +211,7 @@ window.processBillVisionOCR = function() {
             const optimizedBase64 = canvas.toDataURL('image/jpeg', 0.82).split(',')[1];
 
             if(fillLine) fillLine.style.width = '50%';
-            if(statusText) statusText.innerText = "Analisi e lettura testo tramite Google Vision... 🔍";
+            if(statusText) statusText.innerText = "Analisi Google Vision... 🔍";
 
             fetch("/api/ocr", {
                 method: "POST",
@@ -219,66 +219,65 @@ window.processBillVisionOCR = function() {
                 body: JSON.stringify({ base64Image: optimizedBase64 })
             })
             .then(response => {
-                if (!response.ok) throw new Error("API Google non raggiungibile. Controlla la chiave su Vercel.");
+                if (!response.ok) throw new Error("API Google non raggiungibile.");
                 return response.json();
             })
             .then(data => {
                 if (data.error) throw new Error(data.error);
 
                 if(fillLine) fillLine.style.width = '90%';
-                if(statusText) statusText.innerText = "Iniezione target points completata! ✨";
+                if(statusText) statusText.innerText = "Compilazione righe completata! ✨";
 
-                const text = (data.text || "").toLowerCase();
-                console.log("--- TESTO LETTO DA GOOGLE ---", text);
+                // APPIATTISCE TUTTO: sostituisce gli a capo con spazi vuoti
+                let text = (data.text || "").toLowerCase().replace(/\s+/g, ' ');
+                console.log("--- TESTO APPIATTITO ---", text);
 
                 const findVal = (keywords) => {
                     for (let kw of keywords) {
-                        const regex = new RegExp(`${kw}[^0-9]*([0-9]+[.,][0-9]{2})`, 'i');
+                        const regex = new RegExp(`${kw}[^0-9]*([0-9]+[.,][0-9]{2,4})`, 'i');
                         const match = text.match(regex);
-                        if (match) return match[1].replace(',', '.');
+                        if (match) {
+                            // SOSTITUZIONE CHIRURGICA:
+                            // Sostituisce il numero con XXX solo all'interno del blocco appena trovato!
+                            text = text.replace(match[0], match[0].replace(match[1], 'XXX'));
+                            return match[1].replace(',', '.');
+                        }
                     }
                     return "0.00";
                 };
 
                 const map = { 
-                    bill_quotaFissa: ["quota fissa"],
-                    bill_canoniIdrici: ["canoni idrici", "canone idrico"],
-                    bill_canoneFognatura: ["fognatura", "canone fognatura"],
-                    bill_canoneDepurazione: ["depurazione", "canone depurazione"],
-                    bill_perAcqua: ["perequazione acqua"],
-                    bill_perFognatura: ["perequazione fognatura"],
-                    bill_perDepurazione: ["perequazione depurazione"],
-                    bill_speseSpedizione: ["spese di spedizione", "spese di postalizzazione"]
+                    bill_quotaFissa: ["quota fissa", "fissa"],
+                    bill_canoniIdrici: ["canoni idrici", "idrici", "canone idrico", "idrico"],
+                    bill_canoneFognatura: ["canone fognatura", "fognatura", "fognario"],
+                    bill_canoneDepurazione: ["canone depurazione", "depurazione"],
+                    bill_perAcqua: ["perequazione acqua", "perequazione acq"],
+                    bill_perFognatura: ["perequazione fognatura", "perequazione fog"],
+                    bill_perDepurazione: ["perequazione depurazione", "perequazione dep"],
+                    bill_speseSpedizione: ["spese di postalizzazione", "spese di spedizione", "postalizzazione", "spedizione"]
                 };
 
                 Object.entries(map).forEach(([id, kws]) => { 
                     const el = document.getElementById(id);
+                    // Forza a 2 decimali perfetti
                     if(el) el.value = parseFloat(findVal(kws)).toFixed(2); 
                 });
 
                 recalculateBillTotalsAndStandbyStates();
 
                 openMagicModal({
-                    title: "Data Core Agganciato 🤖",
-                    description: "Scansione completata. I dati sono stati estratti correttamente.",
+                    title: "Matrice Compilata 🎯",
+                    description: "Dati estratti e arrotondati a 2 decimali con successo.",
                     btnGradient: "linear-gradient(135deg, #22d3ee, #3b82f6)",
-                    icon: "🤖",
+                    icon: "✅",
                     bgIcon: "rgba(34, 211, 238, 0.1)",
                     borderIcon: "rgba(34, 211, 238, 0.2)",
-                    buttons: [{ text: "Accedi ai Risultati ⚡", type: "primary", action: null }]
+                    buttons: [{ text: "Ottimo!", type: "primary", action: null }]
                 });
             })
             .catch(err => {
                 console.error("OCR Exception handled:", err);
-                openMagicModal({
-                    title: "Errore Scansione",
-                    description: "Si è verificato un errore durante la lettura: " + err.message,
-                    btnGradient: "linear-gradient(135deg, #f43f5e, #be123c)",
-                    icon: "⚠️",
-                    bgIcon: "rgba(244, 63, 94, 0.1)",
-                    borderIcon: "rgba(244, 63, 94, 0.2)",
-                    buttons: [{ text: "Chiudi", type: "primary", action: null }]
-                });
+                alert("Errore durante l'estrazione OCR: " + err.message);
             })
             .finally(() => {
                 progressChassis.style.display = 'none';
