@@ -1,35 +1,68 @@
 export default async function handler(req, res) {
-    if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
+    // 1. Only allow POST requests
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
 
     try {
-        const { base64Image, promptInstruction } = req.body;
+        const { base64Image } = req.body;
         
-        // Qui il server ha accesso REALE e SICURO alla tua chiave su Vercel!
-        const apiKey = process.env.GROQ_API_KEY; 
+        if (!base64Image) {
+            return res.status(400).json({ error: 'No image provided' });
+        }
 
-        const groqResponse = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${apiKey}`,
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                messages: [{
-                    role: "user",
-                    content: [
-                        { type: "text", text: promptInstruction },
-                        { type: "image_url", image_url: { url: `data:image/jpeg;base64,${base64Image}` } }
+        // 2. Grab your Google API Key from Vercel Environment Variables
+        const apiKey = process.env.GOOGLE_API_KEY;
+        if (!apiKey) {
+            return res.status(500).json({ error: 'Google API key is missing on Vercel' });
+        }
+
+        // 3. The exact Google Cloud Vision URL
+        const googleVisionUrl = `https://vision.googleapis.com/v1/images:annotate?key=${apiKey}`;
+
+        // 4. Prepare the package for Google (DOCUMENT_TEXT_DETECTION is best for bills)
+        const payload = {
+            requests: [
+                {
+                    image: {
+                        content: base64Image
+                    },
+                    features: [
+                        {
+                            type: "DOCUMENT_TEXT_DETECTION" 
+                        }
                     ]
-                }],
-                model: "meta-llama/llama-4-scout-17b-16e-instruct",
-                response_format: { type: "json_object" },
-                temperature: 0.0
-            })
+                }
+            ]
+        };
+
+        // 5. Send it to Google
+        const response = await fetch(googleVisionUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload)
         });
 
-        const data = await groqResponse.json();
-        return res.status(200).json(data);
+        const data = await response.json();
+
+        // 6. If Google gets mad (e.g., wrong API key), tell our app gracefully
+        if (data.error) {
+            return res.status(400).json({ 
+                error: data.error.message || 'Google Vision API Error', 
+                details: data.error 
+            });
+        }
+
+        // 7. Extract the raw text from Google's response
+        const text = data.responses[0]?.fullTextAnnotation?.text || '';
+
+        // 8. Send it back to app.js!
+        return res.status(200).json({ text: text });
+
     } catch (error) {
-        return res.status(500).json({ error: error.message });
+        console.error('Server Error:', error);
+        return res.status(500).json({ error: 'Internal Server Error', details: error.message });
     }
 }
