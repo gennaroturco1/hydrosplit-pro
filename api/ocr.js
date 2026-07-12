@@ -12,7 +12,7 @@ export default async function handler(req, res) {
         }
 
         // 2. Grab your Google API Key from Vercel Environment Variables
-        const apiKey = process.env.GOOGLE_API_KEY;
+        const apiKey = process.env.OCR_API;
         if (!apiKey) {
             return res.status(500).json({ error: 'Google API key is missing on Vercel' });
         }
