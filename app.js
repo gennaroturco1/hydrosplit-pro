@@ -118,7 +118,6 @@ window.triggerSmartScanner = function() {
     const isAndroid = /Android/i.test(navigator.userAgent);
 
     if (isAndroid) {
-        // Apriamo il tuo modale custom
         openMagicModal({
             title: "Sorgente Immagine",
             description: "Seleziona se desideri scattare una foto della bolletta in tempo reale o caricarla dalla galleria.",
@@ -131,7 +130,7 @@ window.triggerSmartScanner = function() {
                     text: "📁 Galleria / File", 
                     type: "secondary", 
                     action: () => {
-                        mainInput.removeAttribute('capture'); // Rimuove la fotocamera forzata
+                        mainInput.removeAttribute('capture');
                         mainInput.click();
                     } 
                 },
@@ -139,14 +138,13 @@ window.triggerSmartScanner = function() {
                     text: "📸 Fotocamera", 
                     type: "primary", 
                     action: () => {
-                        mainInput.setAttribute('capture', 'environment'); // Forza l'hardware della fotocamera
+                        mainInput.setAttribute('capture', 'environment');
                         mainInput.click();
                     } 
                 }
             ]
         });
     } else {
-        // Su iPhone rimuoviamo capture per lasciare il menu nativo a 3 opzioni perfetto
         mainInput.removeAttribute('capture');
         mainInput.click();
     }
@@ -157,7 +155,6 @@ window.handleSmartUpload = function(element) {
     
     const mainInput = document.getElementById('androidFriendlyInput');
     if (mainInput) {
-        // Iniezione virtuale sicura del file multimediale tramite DataTransfer API
         const dataTransfer = new DataTransfer();
         dataTransfer.items.add(element.files[0]);
         mainInput.files = dataTransfer.files;
@@ -167,7 +164,7 @@ window.handleSmartUpload = function(element) {
 };
 
 /* ==========================================================================
-   ⚡ ENTERPRISE VISION-LLM CALCULATION ENGINE WITH CLIENT-SIDE COMPRESSION
+   ⚡ GOOGLE VISION OCR ENGINE WITH CLIENT-SIDE COMPRESSION
    ========================================================================== */
 window.processBillVisionOCR = function() {
     const fileInput = document.getElementById('androidFriendlyInput');
@@ -179,14 +176,14 @@ window.processBillVisionOCR = function() {
     const statusText = document.getElementById('scannerStatusText');
 
     progressChassis.style.display = 'block';
-    fillLine.style.width = '10%';
-    statusText.innerText = "Lettura file immagine... 📸";
+    if(fillLine) fillLine.style.width = '10%';
+    if(statusText) statusText.innerText = "Lettura file immagine... 📸";
 
     const reader = new FileReader();
     reader.readAsDataURL(file);
     reader.onload = function(event) {
-        statusText.innerText = "Ottimizzazione e compressione mobile in corso... 📉";
-        fillLine.style.width = '30%';
+        if(statusText) statusText.innerText = "Ottimizzazione e compressione mobile in corso... 📉";
+        if(fillLine) fillLine.style.width = '30%';
 
         const img = new Image();
         img.src = event.target.result;
@@ -213,76 +210,75 @@ window.processBillVisionOCR = function() {
 
             const optimizedBase64 = canvas.toDataURL('image/jpeg', 0.82).split(',')[1];
 
-            fillLine.style.width = '50%';
-            statusText.innerText = "Analisi semantica e bilanciamento della matrice... 🔍";
-
-            const promptInstruction = `You are a data extraction engine. Analyze the provided Italian water bill image.
-            Locate the section titled "COSA DEVO PAGARE?". Extract the numerical values for the table rows.
-            
-            Return STRICTLY a raw JSON object with float numbers. No markdown blocks, no commentary.
-            
-            Use these exact target keys:
-            - "quota_fissa": The value next to 'Quota Fissa' (e.g., 59.21)
-            - "canoni_idrici": The value next to 'Canoni Idrici' (e.g., 441.32)
-            - "fognatura": The value next to 'Canone Fognatura' (e.g., 38.88)
-            - "depurazione": The value next to 'Canone Depurazione' (e.g., 117.73)
-            
-            - "perequazione_acqua": Find the FIRST 'Oneri Perequazione' row, which is for Acqua (e.g., 12.48)
-            - "perequazione_fognatura": Find the SECOND 'Oneri Perequazione' row, which is for Fognatura (e.g., 12.48)
-            - "perequazione_depurazione": Find the THIRD 'Oneri Perequazione' row, which is for Depurazione (e.g., 12.48)
-            
-            - "spese_spedizione": The value next to 'Spese di Spedizione' or 'Spese di Postalizzazione' (e.g., 0.55)`;
+            if(fillLine) fillLine.style.width = '50%';
+            if(statusText) statusText.innerText = "Analisi e lettura testo tramite Google Vision... 🔍";
 
             fetch("/api/ocr", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    base64Image: optimizedBase64,
-                    promptInstruction: promptInstruction
-                })
+                body: JSON.stringify({ base64Image: optimizedBase64 })
             })
             .then(response => {
-                if (!response.ok) throw new Error("API rate limits or connectivity dropped");
+                if (!response.ok) throw new Error("API Google non raggiungibile. Controlla la chiave su Vercel.");
                 return response.json();
             })
             .then(data => {
-                fillLine.style.width = '90%';
-                statusText.innerText = "Iniezione target points completata! ✨";
+                if (data.error) throw new Error(data.error);
 
-                const rawContent = data.choices[0].message.content.trim();
-                const payload = JSON.parse(rawContent);
-                console.log("--- HYDRO SPLIT MATRIX COMPONENT ---", payload);
+                if(fillLine) fillLine.style.width = '90%';
+                if(statusText) statusText.innerText = "Iniezione target points completata! ✨";
 
-                document.getElementById('bill_quotaFissa').value = parseFloat(payload.quota_fissa || 0).toFixed(2);
-                document.getElementById('bill_canoniIdrici').value = parseFloat(payload.canoni_idrici || 0).toFixed(2);
-                document.getElementById('bill_canoneFognatura').value = parseFloat(payload.fognatura || 0).toFixed(2);
-                document.getElementById('bill_canoneDepurazione').value = parseFloat(payload.depurazione || 0).toFixed(2);
-                
-                document.getElementById('bill_perAcqua').value = parseFloat(payload.perequazione_acqua || 0).toFixed(2);
-                document.getElementById('bill_perFognatura').value = parseFloat(payload.perequazione_fognatura || 0).toFixed(2);
-                document.getElementById('bill_perDepurazione').value = parseFloat(payload.perequazione_depurazione || 0).toFixed(2);
-                
-                document.getElementById('bill_speseSpedizione').value = parseFloat(payload.spese_spedizione || 0).toFixed(2);
+                const text = (data.text || "").toLowerCase();
+                console.log("--- TESTO LETTO DA GOOGLE ---", text);
+
+                const findVal = (keywords) => {
+                    for (let kw of keywords) {
+                        const regex = new RegExp(`${kw}[^0-9]*([0-9]+[.,][0-9]{2})`, 'i');
+                        const match = text.match(regex);
+                        if (match) return match[1].replace(',', '.');
+                    }
+                    return "0.00";
+                };
+
+                const map = { 
+                    bill_quotaFissa: ["quota fissa"],
+                    bill_canoniIdrici: ["canoni idrici", "canone idrico"],
+                    bill_canoneFognatura: ["fognatura", "canone fognatura"],
+                    bill_canoneDepurazione: ["depurazione", "canone depurazione"],
+                    bill_perAcqua: ["perequazione acqua"],
+                    bill_perFognatura: ["perequazione fognatura"],
+                    bill_perDepurazione: ["perequazione depurazione"],
+                    bill_speseSpedizione: ["spese di spedizione", "spese di postalizzazione"]
+                };
+
+                Object.entries(map).forEach(([id, kws]) => { 
+                    const el = document.getElementById(id);
+                    if(el) el.value = parseFloat(findVal(kws)).toFixed(2); 
+                });
 
                 recalculateBillTotalsAndStandbyStates();
 
-openMagicModal({
-    title: "Data Core Agganciato 🤖",
-    description: "Scansione completata. Il motore neurale di HydroSplit ha estratto i nodi di spesa e ottimizzato il riparto millesimale.",
-    btnGradient: "linear-gradient(135deg, #22d3ee, #3b82f6)",
-    icon: "🤖",
-    bgIcon: "rgba(34, 211, 238, 0.1)",
-    borderIcon: "rgba(34, 211, 238, 0.2)",
-    buttons: [{ text: "Accedi ai Risultati ⚡", type: "primary", action: null }]
-});
+                openMagicModal({
+                    title: "Data Core Agganciato 🤖",
+                    description: "Scansione completata. I dati sono stati estratti correttamente.",
+                    btnGradient: "linear-gradient(135deg, #22d3ee, #3b82f6)",
+                    icon: "🤖",
+                    bgIcon: "rgba(34, 211, 238, 0.1)",
+                    borderIcon: "rgba(34, 211, 238, 0.2)",
+                    buttons: [{ text: "Accedi ai Risultati ⚡", type: "primary", action: null }]
+                });
             })
             .catch(err => {
-                console.error("LLM Core Exception handled:", err);
-                document.getElementById('bill_quotaFissa').value = "59.21";
-                document.getElementById('bill_canoniIdrici').value = "441.32";
-                document.getElementById('bill_canoneFognatura').value = "38.88";
-                document.getElementById('bill_canoneDepurazione').value = "117.73";
-                recalculateBillTotalsAndStandbyStates();
+                console.error("OCR Exception handled:", err);
+                openMagicModal({
+                    title: "Errore Scansione",
+                    description: "Si è verificato un errore durante la lettura: " + err.message,
+                    btnGradient: "linear-gradient(135deg, #f43f5e, #be123c)",
+                    icon: "⚠️",
+                    bgIcon: "rgba(244, 63, 94, 0.1)",
+                    borderIcon: "rgba(244, 63, 94, 0.2)",
+                    buttons: [{ text: "Chiudi", type: "primary", action: null }]
+                });
             })
             .finally(() => {
                 progressChassis.style.display = 'none';
