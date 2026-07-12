@@ -257,23 +257,22 @@ window.processBillVisionOCR = function() {
                     bill_speseSpedizione: ["spese di postalizzazione", "spese di spedizione", "postalizzazione", "spedizione"]
                 };
 
-                Object.entries(map).forEach(([id, kws]) => { 
+Object.entries(map).forEach(([id, kws]) => { 
                     const el = document.getElementById(id);
-                    // Forza a 2 decimali perfetti
                     if(el) el.value = parseFloat(findVal(kws)).toFixed(2); 
                 });
 
+                // 1. Aggiorna i totali
                 recalculateBillTotalsAndStandbyStates();
 
-                openMagicModal({
-                    title: "Matrice Compilata 🎯",
-                    description: "Dati estratti e arrotondati a 2 decimali con successo.",
-                    btnGradient: "linear-gradient(135deg, #22d3ee, #3b82f6)",
-                    icon: "✅",
-                    bgIcon: "rgba(34, 211, 238, 0.1)",
-                    borderIcon: "rgba(34, 211, 238, 0.2)",
-                    buttons: [{ text: "Ottimo!", type: "primary", action: null }]
-                });
+                // 2. Chiudi il progress bar
+                progressChassis.style.display = 'none';
+
+                // 3. Esegui subito il calcolo del riparto
+                window.calculateSplit();
+
+                // 4. (Opzionale) Scroll automatico sui risultati
+                document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth' });
             })
             .catch(err => {
                 console.error("OCR Exception handled:", err);
