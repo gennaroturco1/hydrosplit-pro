@@ -269,7 +269,10 @@ Object.entries(map).forEach(([id, kws]) => {
                 progressChassis.style.display = 'none';
 
                 // 3. Esegui subito il calcolo del riparto
-                window.calculateSplit();
+                //window.calculateSplit();
+                // 3. Abbiamo finito la scansione, ora l'utente può inserire i dati a mano 
+                //    senza essere interrotto da controlli o errori.
+                console.log("Scansione completata, attendo input manuale...");
 
                 // 4. (Opzionale) Scroll automatico sui risultati
                 document.getElementById('resultsCard').scrollIntoView({ behavior: 'smooth' });
